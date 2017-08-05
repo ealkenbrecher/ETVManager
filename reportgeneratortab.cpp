@@ -215,7 +215,24 @@ void ReportGeneratorTab::on_tableReportTemplate_doubleClicked(const QModelIndex 
   }
 }
 
-std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
+bool ReportGeneratorTab::getSavedDecissions (std::vector<QStringList> &stringList)
+{
+  stringList.clear();
+
+  QSqlQuery queryOldDecission (QSqlDatabase::database(mUser));
+  queryOldDecission.prepare("SELECT *  FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+  queryOldDecission.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  queryOldDecission.bindValue(":year", Global::getInstance()->getCurrentYear());
+  queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+
+  queryOldDecission.exec();
+  if (queryOldDecission.size() > 0)
+    return true;
+  else
+    return false;
+}
+
+bool ReportGeneratorTab::getAgendaItems(std::vector<QStringList> &stringList)
 {
   QSqlQuery query (QSqlDatabase::database(mUser));
 
@@ -234,12 +251,11 @@ std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
   QString type ("");
   QString top_id ("");
 
-  mStringListVector.clear();
+  QStringList strings;
+  strings.clear();
 
   while (query.next())
   {
-    QStringList stringList;
-
     top_id  = query.value(0).toString();
     header  = query.value(1).toString();
     descr   = query.value(2).toString();
@@ -248,25 +264,30 @@ std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
     sug3    = query.value(5).toString();
     type    = query.value(6).toString();
 
-    stringList.insert(0, top_id);
-    stringList.insert(1, header);
-    stringList.insert(2, descr);
-    stringList.insert(3, sug1);
-    stringList.insert(4, sug2);
-    stringList.insert(5, sug3);
-    stringList.insert(6, type);
+    strings.insert(0, top_id);
+    strings.insert(1, header);
+    strings.insert(2, descr);
+    strings.insert(3, sug1);
+    strings.insert(4, sug2);
+    strings.insert(5, sug3);
+    strings.insert(6, type);
 
-    mStringListVector.push_back(stringList);
+    stringList.push_back(strings);
+    strings.clear();
   }
-  return mStringListVector;
+  return true;
 }
 
 void ReportGeneratorTab::startAgendaWizardTest()
 {
-  std::vector<QStringList> lStringListVector;
-  lStringListVector = getAgendaItems();
+  //Tagesordnungspunkte zur ETV aus DB holen und in StringListVector speichern
+  std::vector<QStringList> lStringListAgendaItems;
+  getAgendaItems(lStringListAgendaItems);
+  lStringListAgendaItems.front();
 
-  lStringListVector.front();
+  //ggf. gespeicherte Beschlüsse zu Tagesordnungspunkten aus DB holen und lokal speichern
+  std::vector<QStringList> lStringListSavedDecissions;
+  bool hasSavedDecissions = getSavedDecissions(lStringListSavedDecissions);
 
   QStringList stringList;
 
@@ -276,12 +297,13 @@ void ReportGeneratorTab::startAgendaWizardTest()
   QString header ("");
   QString descr ("");
   QString type ("");
+
   int top_id = -1;
 
-  for(std::vector<int>::size_type i = 0; i != lStringListVector.size(); i++)
+  for(std::vector<int>::size_type i = 0; i != lStringListAgendaItems.size(); i++)
   {
     //get decission
-    stringList = lStringListVector[i];
+    stringList = lStringListAgendaItems[i];
 
     top_id  = stringList.value(0).toInt();
     header  = stringList.value(1);
@@ -293,25 +315,6 @@ void ReportGeneratorTab::startAgendaWizardTest()
 
     WizardDialogBox dialog (this, header.toStdString().c_str(), eComplexDialog);
 
-    //check for old decission ->
-
-    QSqlQuery queryOldDecission (QSqlDatabase::database(mUser));
-    queryOldDecission.prepare("SELECT *  FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum AND top_id = :top_id");
-    queryOldDecission.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    queryOldDecission.bindValue(":year", Global::getInstance()->getCurrentYear());
-    queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-    queryOldDecission.bindValue(":top_id", top_id);
-
-    bool ok = queryOldDecission.exec();
-    bool foundOldRecord = false;
-
-    if (ok && queryOldDecission.next())
-    {
-      foundOldRecord = true;
-      dialog.setSavedSuggestion(queryOldDecission.value(7).toString());
-    }
-    //<- check for Old decission
-
     if ("" != sug1)
       dialog.setSuggestion1(sug1);
 
@@ -322,14 +325,16 @@ void ReportGeneratorTab::startAgendaWizardTest()
       dialog.setSuggestion3(sug3);
 
     //set old Values ->
-    if (foundOldRecord)
+    if (hasSavedDecissions)
     {
+      /*todo:
+       * lStringListSavedDecissions... nach top_id suchen und Werte holen ->
+      dialog.setSavedSuggestion(queryOldDecission.value(7).toString());
       dialog.setVotePreview (queryOldDecission.value(8).toString());
       dialog.setVotingsYes (queryOldDecission.value(9).toFloat());
       dialog.setVotingsNo (queryOldDecission.value(10).toFloat());
-      dialog.setVotingsConcordant (queryOldDecission.value(11).toFloat());
+      dialog.setVotingsConcordant (queryOldDecission.value(11).toFloat());*/
     }
-    //<- set old Values
 
     int retVal = dialog.exec();
 
@@ -343,7 +348,7 @@ void ReportGeneratorTab::startAgendaWizardTest()
       query3.bindValue(":year", Global::getInstance()->getCurrentYear());
       query3.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
       query3.bindValue(":top_id", top_id);
-      ok = query3.exec();
+      query3.exec();
 
       bool resultFound = false;
       //record found -> update query
@@ -896,8 +901,8 @@ int ReportGeneratorTab::processWizardDialog (QString aDialogText, QString aWildc
 
 void ReportGeneratorTab::on_startAgendaWizard_clicked()
 {
-  //startAgendaWizardTest();
-  startAgendaWizard();
+  startAgendaWizardTest();
+  //startAgendaWizard();
   updateAgendaTable();
 }
 
