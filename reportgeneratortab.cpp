@@ -215,6 +215,171 @@ void ReportGeneratorTab::on_tableReportTemplate_doubleClicked(const QModelIndex 
   }
 }
 
+std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
+{
+  QSqlQuery query (QSqlDatabase::database(mUser));
+
+  query.clear();
+  query.prepare("SELECT top_id, top_header, top_descr, top_vorschlag, top_vorschlag2, top_vorschlag3, beschlussArt FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  query.bindValue(":year", Global::getInstance()->getCurrentYear());
+  query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+  query.exec();
+
+  QString sug1 ("");
+  QString sug2 ("");
+  QString sug3 ("");
+  QString header ("");
+  QString descr ("");
+  QString type ("");
+  QString top_id ("");
+
+  mStringListVector.clear();
+
+  while (query.next())
+  {
+    QStringList stringList;
+
+    top_id  = query.value(0).toString();
+    header  = query.value(1).toString();
+    descr   = query.value(2).toString();
+    sug1    = query.value(3).toString();
+    sug2    = query.value(4).toString();
+    sug3    = query.value(5).toString();
+    type    = query.value(6).toString();
+
+    stringList.insert(0, top_id);
+    stringList.insert(1, header);
+    stringList.insert(2, descr);
+    stringList.insert(3, sug1);
+    stringList.insert(4, sug2);
+    stringList.insert(5, sug3);
+    stringList.insert(6, type);
+
+    mStringListVector.push_back(stringList);
+  }
+  return mStringListVector;
+}
+
+void ReportGeneratorTab::startAgendaWizardTest()
+{
+  std::vector<QStringList> lStringListVector;
+  lStringListVector = getAgendaItems();
+
+  lStringListVector.front();
+
+  QStringList stringList;
+
+  QString sug1 ("");
+  QString sug2 ("");
+  QString sug3 ("");
+  QString header ("");
+  QString descr ("");
+  QString type ("");
+  int top_id = -1;
+
+  for(std::vector<int>::size_type i = 0; i != lStringListVector.size(); i++)
+  {
+    //get decission
+    stringList = lStringListVector[i];
+
+    top_id  = stringList.value(0).toInt();
+    header  = stringList.value(1);
+    descr   = stringList.value(2);
+    sug1    = stringList.value(3);
+    sug2    = stringList.value(4);
+    sug3    = stringList.value(5);
+    type    = stringList.value(6);
+
+    WizardDialogBox dialog (this, header.toStdString().c_str(), eComplexDialog);
+
+    //check for old decission ->
+
+    QSqlQuery queryOldDecission (QSqlDatabase::database(mUser));
+    queryOldDecission.prepare("SELECT *  FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum AND top_id = :top_id");
+    queryOldDecission.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+    queryOldDecission.bindValue(":year", Global::getInstance()->getCurrentYear());
+    queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+    queryOldDecission.bindValue(":top_id", top_id);
+
+    bool ok = queryOldDecission.exec();
+    bool foundOldRecord = false;
+
+    if (ok && queryOldDecission.next())
+    {
+      foundOldRecord = true;
+      dialog.setSavedSuggestion(queryOldDecission.value(7).toString());
+    }
+    //<- check for Old decission
+
+    if ("" != sug1)
+      dialog.setSuggestion1(sug1);
+
+    if ("" != sug2)
+      dialog.setSuggestion2(sug2);
+
+    if ("" != sug3)
+      dialog.setSuggestion3(sug3);
+
+    //set old Values ->
+    if (foundOldRecord)
+    {
+      dialog.setVotePreview (queryOldDecission.value(8).toString());
+      dialog.setVotingsYes (queryOldDecission.value(9).toFloat());
+      dialog.setVotingsNo (queryOldDecission.value(10).toFloat());
+      dialog.setVotingsConcordant (queryOldDecission.value(11).toFloat());
+    }
+    //<- set old Values
+
+    int retVal = dialog.exec();
+
+    if (QDialog::Accepted == retVal && -1 != top_id)
+    {
+      QSqlQuery query3 (QSqlDatabase::database(mUser));
+
+      //get cover page
+      query3.prepare("SELECT top_id FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum AND top_id = :top_id");
+      query3.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+      query3.bindValue(":year", Global::getInstance()->getCurrentYear());
+      query3.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+      query3.bindValue(":top_id", top_id);
+      ok = query3.exec();
+
+      bool resultFound = false;
+      //record found -> update query
+      if (query3.next())
+      {
+        resultFound = true;
+
+        //set values
+        query3.prepare("UPDATE Beschluesse SET beschlussformulierung = :formulierung, header = :headerText, descr = :description, abstimmergebnis = :ergebnis, stimmenJa = :ja, stimmenNein = :nein, stimmenEnthaltung = :enthaltung, beschlusssammlungVermerke = :vermerke, beschlussArt =:type WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum AND top_id = :top_id");
+      }
+
+      //no record found -> insert query
+      if (!resultFound)
+      {
+        query3.prepare("INSERT INTO Beschluesse (obj_id, wi_jahr, etv_nr, top_id, beschlussformulierung, header, descr, abstimmergebnis, stimmenJa, stimmenNein, stimmenEnthaltung, protokoll_id, beschlusssammlungVermerke, beschlussArt) VALUES (:id, :year, :etvNum, :top_id, :formulierung, :headerText, :description, :ergebnis, :ja, :nein, :enthaltung, :protokollid, :vermerke, :type)");
+      }
+
+      query3.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+      query3.bindValue(":year", Global::getInstance()->getCurrentYear());
+      query3.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+      query3.bindValue(":top_id", top_id);
+      query3.bindValue(":protokollid", top_id);
+      query3.bindValue(":headerText", header);
+      query3.bindValue(":description", descr);
+      query3.bindValue(":formulierung", dialog.getResult());
+      query3.bindValue(":ergebnis", dialog.getVoteText());
+      query3.bindValue(":ja", dialog.getVotingsYes());
+      query3.bindValue(":nein", dialog.getVotingsNo());
+      query3.bindValue(":enthaltung", dialog.getVotingsConcordant());
+      query3.bindValue(":vermerke", dialog.getVoteText());
+      query3.bindValue(":type", type);
+      query3.exec ();
+    }
+  }
+}
+
 void ReportGeneratorTab::startAgendaWizard()
 {
   QSqlQuery query (QSqlDatabase::database(mUser));
@@ -731,8 +896,9 @@ int ReportGeneratorTab::processWizardDialog (QString aDialogText, QString aWildc
 
 void ReportGeneratorTab::on_startAgendaWizard_clicked()
 {
- startAgendaWizard();
- updateAgendaTable();
+  //startAgendaWizardTest();
+  startAgendaWizard();
+  updateAgendaTable();
 }
 
 void ReportGeneratorTab::on_addEntry_clicked()

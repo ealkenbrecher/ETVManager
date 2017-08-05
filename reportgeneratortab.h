@@ -39,7 +39,9 @@ private slots:
 
 private:
   void startCoverpageWizard ();
+  void startAgendaWizardTest ();
   void startAgendaWizard ();
+  std::vector<QStringList> getAgendaItems ();
   void updateAgendaTable ();
   void updateReportTemplateTable ();
   void changeAgendaItemSettings (int aId);
@@ -50,6 +52,7 @@ private:
   bool mMarkerProtokollfuehrerFktSet;
   QSqlQueryModelRichtext* mQueryModel;
   QSqlQueryModelRichtext* mQueryModelReportTemplate;
+  std::vector<QStringList> mStringListVector;
   QString mUser;
 };
 
