@@ -226,10 +226,41 @@ bool ReportGeneratorTab::getSavedDecissions (std::vector<QStringList> &stringLis
   queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
 
   queryOldDecission.exec();
-  if (queryOldDecission.size() > 0)
-    return true;
-  else
-    return false;
+
+  bool hasItems = false;
+
+  QStringList strings;
+  strings.clear();
+
+  while (queryOldDecission.next())
+  {
+    hasItems = true;
+
+    QString top_id  = queryOldDecission.value(3).toString();
+    QString header  = queryOldDecission.value(5).toString();
+    QString descr   = queryOldDecission.value(6).toString();
+    QString decission = queryOldDecission.value(7).toString();
+    QString decissionPronouncement    = queryOldDecission.value(8).toString();
+    QString votesYes  = queryOldDecission.value(9).toString();
+    QString votesNo = queryOldDecission.value(10).toString();
+    QString votesAbstention = queryOldDecission.value(11).toString();
+    QString decissionType = queryOldDecission.value(11).toString();
+
+    strings.insert(0, top_id);
+    strings.insert(1, header);
+    strings.insert(2, descr);
+    strings.insert(3, decission);
+    strings.insert(4, decissionPronouncement);
+    strings.insert(5, votesYes);
+    strings.insert(6, votesNo);
+    strings.insert(7, votesAbstention);
+    strings.insert(8, decissionType);
+
+    stringList.push_back(strings);
+    strings.clear();
+  }
+
+  return hasItems;
 }
 
 bool ReportGeneratorTab::getAgendaItems(std::vector<QStringList> &stringList)
@@ -288,6 +319,7 @@ void ReportGeneratorTab::startAgendaWizardTest()
   //ggf. gespeicherte Beschlüsse zu Tagesordnungspunkten aus DB holen und lokal speichern
   std::vector<QStringList> lStringListSavedDecissions;
   bool hasSavedDecissions = getSavedDecissions(lStringListSavedDecissions);
+  lStringListSavedDecissions.front();
 
   QStringList stringList;
 
@@ -297,6 +329,12 @@ void ReportGeneratorTab::startAgendaWizardTest()
   QString header ("");
   QString descr ("");
   QString type ("");
+
+  QString savedSuggestion("");
+  QString votePreview("");
+  QString votesYes ("");
+  QString votesNo ("");
+  QString votesAbstention ("");
 
   int top_id = -1;
 
@@ -313,6 +351,28 @@ void ReportGeneratorTab::startAgendaWizardTest()
     sug3    = stringList.value(5);
     type    = stringList.value(6);
 
+    if (hasSavedDecissions)
+    {
+      bool foundRecord = false;
+
+      for(std::vector<int>::size_type i = 0; i != lStringListSavedDecissions.size() && foundRecord == false; i++)
+      {
+        stringList = lStringListSavedDecissions[i];
+
+        //find record
+        if (top_id == stringList.value(0).toInt())
+        {
+          savedSuggestion = stringList.value(3);
+          votePreview = savedSuggestion = stringList.value(4);
+          votesYes = savedSuggestion = stringList.value(5);
+          votesNo = savedSuggestion = stringList.value(6);
+          votesAbstention = savedSuggestion = stringList.value(7);
+          //end loop
+          foundRecord = true;
+        }
+      }
+    }
+
     WizardDialogBox dialog (this, header.toStdString().c_str(), eComplexDialog);
 
     if ("" != sug1)
@@ -327,13 +387,11 @@ void ReportGeneratorTab::startAgendaWizardTest()
     //set old Values ->
     if (hasSavedDecissions)
     {
-      /*todo:
-       * lStringListSavedDecissions... nach top_id suchen und Werte holen ->
-      dialog.setSavedSuggestion(queryOldDecission.value(7).toString());
-      dialog.setVotePreview (queryOldDecission.value(8).toString());
-      dialog.setVotingsYes (queryOldDecission.value(9).toFloat());
-      dialog.setVotingsNo (queryOldDecission.value(10).toFloat());
-      dialog.setVotingsConcordant (queryOldDecission.value(11).toFloat());*/
+      dialog.setSavedSuggestion(savedSuggestion);
+      dialog.setVotePreview (votePreview);
+      dialog.setVotingsYes (votesYes.toFloat());
+      dialog.setVotingsNo (votesNo.toFloat());
+      dialog.setVotingsConcordant (votesAbstention.toFloat());
     }
 
     int retVal = dialog.exec();
