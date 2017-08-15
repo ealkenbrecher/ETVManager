@@ -246,6 +246,28 @@ bool ReportGeneratorTab::getSavedDecissions (std::vector<QStringList> &stringLis
     QString votesAbstention = queryOldDecission.value(11).toString();
     QString decissionType = queryOldDecission.value(11).toString();
 
+    qDebug () << "queryOldDecission.value(1).toString();" << queryOldDecission.value(1).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(2).toString();" << queryOldDecission.value(2).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(3).toString();" << queryOldDecission.value(3).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(4).toString();" << queryOldDecission.value(4).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(5).toString();" << queryOldDecission.value(5).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(6).toString();" << queryOldDecission.value(6).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(7).toString();" << queryOldDecission.value(7).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(8).toString();" << queryOldDecission.value(8).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(9).toString();" << queryOldDecission.value(9).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(10).toString();" << queryOldDecission.value(10).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(11).toString();" << queryOldDecission.value(11).toString();
+
     strings.insert(0, top_id);
     strings.insert(1, header);
     strings.insert(2, descr);
@@ -357,16 +379,17 @@ void ReportGeneratorTab::startAgendaWizardTest()
 
       for(std::vector<int>::size_type i = 0; i != lStringListSavedDecissions.size() && foundRecord == false; i++)
       {
+        stringList.clear();
         stringList = lStringListSavedDecissions[i];
 
         //find record
         if (top_id == stringList.value(0).toInt())
         {
           savedSuggestion = stringList.value(3);
-          votePreview = savedSuggestion = stringList.value(4);
-          votesYes = savedSuggestion = stringList.value(5);
-          votesNo = savedSuggestion = stringList.value(6);
-          votesAbstention = savedSuggestion = stringList.value(7);
+          votePreview = stringList.value(4);
+          votesYes = stringList.value(5);
+          votesNo = stringList.value(6);
+          votesAbstention = stringList.value(7);
           //end loop
           foundRecord = true;
         }
@@ -389,6 +412,7 @@ void ReportGeneratorTab::startAgendaWizardTest()
     {
       dialog.setSavedSuggestion(savedSuggestion);
       dialog.setVotePreview (votePreview);
+
       dialog.setVotingsYes (votesYes.toFloat());
       dialog.setVotingsNo (votesNo.toFloat());
       dialog.setVotingsConcordant (votesAbstention.toFloat());
