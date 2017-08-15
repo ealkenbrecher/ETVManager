@@ -215,8 +215,80 @@ void ReportGeneratorTab::on_tableReportTemplate_doubleClicked(const QModelIndex 
   }
 }
 
-std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
+bool ReportGeneratorTab::getSavedDecissions (std::vector<QStringList> &stringList)
 {
+  stringList.clear();
+
+  QSqlQuery queryOldDecission (QSqlDatabase::database(mUser));
+  queryOldDecission.prepare("SELECT *  FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+  queryOldDecission.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  queryOldDecission.bindValue(":year", Global::getInstance()->getCurrentYear());
+  queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+
+  queryOldDecission.exec();
+
+  bool hasItems = false;
+
+  QStringList strings;
+  strings.clear();
+
+  while (queryOldDecission.next())
+  {
+    hasItems = true;
+
+    QString top_id  = queryOldDecission.value(3).toString();
+    QString header  = queryOldDecission.value(5).toString();
+    QString descr   = queryOldDecission.value(6).toString();
+    QString decission = queryOldDecission.value(7).toString();
+    QString decissionPronouncement    = queryOldDecission.value(8).toString();
+    QString votesYes  = queryOldDecission.value(9).toString();
+    QString votesNo = queryOldDecission.value(10).toString();
+    QString votesAbstention = queryOldDecission.value(11).toString();
+    QString decissionType = queryOldDecission.value(11).toString();
+
+    qDebug () << "queryOldDecission.value(1).toString();" << queryOldDecission.value(1).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(2).toString();" << queryOldDecission.value(2).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(3).toString();" << queryOldDecission.value(3).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(4).toString();" << queryOldDecission.value(4).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(5).toString();" << queryOldDecission.value(5).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(6).toString();" << queryOldDecission.value(6).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(7).toString();" << queryOldDecission.value(7).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(8).toString();" << queryOldDecission.value(8).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(9).toString();" << queryOldDecission.value(9).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(10).toString();" << queryOldDecission.value(10).toString();
+    qDebug () << endl;
+    qDebug () << "queryOldDecission.value(11).toString();" << queryOldDecission.value(11).toString();
+
+    strings.insert(0, top_id);
+    strings.insert(1, header);
+    strings.insert(2, descr);
+    strings.insert(3, decission);
+    strings.insert(4, decissionPronouncement);
+    strings.insert(5, votesYes);
+    strings.insert(6, votesNo);
+    strings.insert(7, votesAbstention);
+    strings.insert(8, decissionType);
+
+    stringList.push_back(strings);
+    strings.clear();
+  }
+
+  return hasItems;
+}
+
+bool ReportGeneratorTab::getAgendaItems(std::vector<QStringList> &stringList)
+{
+  stringList.clear();
+
   QSqlQuery query (QSqlDatabase::database(mUser));
 
   query.clear();
@@ -234,12 +306,11 @@ std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
   QString type ("");
   QString top_id ("");
 
-  mStringListVector.clear();
+  QStringList strings;
+  strings.clear();
 
   while (query.next())
   {
-    QStringList stringList;
-
     top_id  = query.value(0).toString();
     header  = query.value(1).toString();
     descr   = query.value(2).toString();
@@ -248,25 +319,58 @@ std::vector<QStringList> ReportGeneratorTab::getAgendaItems()
     sug3    = query.value(5).toString();
     type    = query.value(6).toString();
 
-    stringList.insert(0, top_id);
-    stringList.insert(1, header);
-    stringList.insert(2, descr);
-    stringList.insert(3, sug1);
-    stringList.insert(4, sug2);
-    stringList.insert(5, sug3);
-    stringList.insert(6, type);
+    strings.insert(0, top_id);
+    strings.insert(1, header);
+    strings.insert(2, descr);
+    strings.insert(3, sug1);
+    strings.insert(4, sug2);
+    strings.insert(5, sug3);
+    strings.insert(6, type);
 
-    mStringListVector.push_back(stringList);
+    stringList.push_back(strings);
+    strings.clear();
   }
-  return mStringListVector;
+  return true;
+}
+
+bool ReportGeneratorTab::getCoverpageItems (QStringList &stringList)
+{
+  stringList.clear();
+
+  QSqlQuery query(QSqlDatabase::database(mUser));
+
+  //get cover page
+  query.prepare("SELECT Protokollvorlage FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  query.bindValue(":year", Global::getInstance()->getCurrentYear());
+  query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+  query.exec();
+
+  bool coverPageFound = false;
+  int retCode = QDialog::Accepted;
+
+  QString coverPageItem ("");
+
+  while (query.next())
+  {
+    coverPageFound = true;
+    coverPageItem = query.value(0).toString();
+    stringList.push_back(coverPageItem);
+  }
+  return coverPageFound;
 }
 
 void ReportGeneratorTab::startAgendaWizardTest()
 {
-  std::vector<QStringList> lStringListVector;
-  lStringListVector = getAgendaItems();
+  //Tagesordnungspunkte zur ETV aus DB holen und in StringListVector speichern
+  std::vector<QStringList> lStringListAgendaItems;
+  getAgendaItems(lStringListAgendaItems);
+  lStringListAgendaItems.front();
 
-  lStringListVector.front();
+  //ggf. gespeicherte Beschlüsse zu Tagesordnungspunkten aus DB holen und lokal speichern
+  std::vector<QStringList> lStringListSavedDecissions;
+  bool hasSavedDecissions = getSavedDecissions(lStringListSavedDecissions);
+  lStringListSavedDecissions.front();
 
   QStringList stringList;
 
@@ -276,12 +380,19 @@ void ReportGeneratorTab::startAgendaWizardTest()
   QString header ("");
   QString descr ("");
   QString type ("");
+
+  QString savedSuggestion("");
+  QString votePreview("");
+  QString votesYes ("");
+  QString votesNo ("");
+  QString votesAbstention ("");
+
   int top_id = -1;
 
-  for(std::vector<int>::size_type i = 0; i != lStringListVector.size(); i++)
+  for(std::vector<int>::size_type i = 0; i != lStringListAgendaItems.size(); i++)
   {
     //get decission
-    stringList = lStringListVector[i];
+    stringList = lStringListAgendaItems[i];
 
     top_id  = stringList.value(0).toInt();
     header  = stringList.value(1);
@@ -291,26 +402,30 @@ void ReportGeneratorTab::startAgendaWizardTest()
     sug3    = stringList.value(5);
     type    = stringList.value(6);
 
-    WizardDialogBox dialog (this, header.toStdString().c_str(), eComplexDialog);
-
-    //check for old decission ->
-
-    QSqlQuery queryOldDecission (QSqlDatabase::database(mUser));
-    queryOldDecission.prepare("SELECT *  FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum AND top_id = :top_id");
-    queryOldDecission.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    queryOldDecission.bindValue(":year", Global::getInstance()->getCurrentYear());
-    queryOldDecission.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-    queryOldDecission.bindValue(":top_id", top_id);
-
-    bool ok = queryOldDecission.exec();
-    bool foundOldRecord = false;
-
-    if (ok && queryOldDecission.next())
+    if (hasSavedDecissions)
     {
-      foundOldRecord = true;
-      dialog.setSavedSuggestion(queryOldDecission.value(7).toString());
+      bool foundRecord = false;
+
+      for(std::vector<int>::size_type i = 0; i != lStringListSavedDecissions.size() && foundRecord == false; i++)
+      {
+        stringList.clear();
+        stringList = lStringListSavedDecissions[i];
+
+        //find record
+        if (top_id == stringList.value(0).toInt())
+        {
+          savedSuggestion = stringList.value(3);
+          votePreview = stringList.value(4);
+          votesYes = stringList.value(5);
+          votesNo = stringList.value(6);
+          votesAbstention = stringList.value(7);
+          //end loop
+          foundRecord = true;
+        }
+      }
     }
-    //<- check for Old decission
+
+    WizardDialogBox dialog (this, header.toStdString().c_str(), eComplexDialog);
 
     if ("" != sug1)
       dialog.setSuggestion1(sug1);
@@ -322,14 +437,15 @@ void ReportGeneratorTab::startAgendaWizardTest()
       dialog.setSuggestion3(sug3);
 
     //set old Values ->
-    if (foundOldRecord)
+    if (hasSavedDecissions)
     {
-      dialog.setVotePreview (queryOldDecission.value(8).toString());
-      dialog.setVotingsYes (queryOldDecission.value(9).toFloat());
-      dialog.setVotingsNo (queryOldDecission.value(10).toFloat());
-      dialog.setVotingsConcordant (queryOldDecission.value(11).toFloat());
+      dialog.setSavedSuggestion(savedSuggestion);
+      dialog.setVotePreview (votePreview);
+
+      dialog.setVotingsYes (votesYes.toFloat());
+      dialog.setVotingsNo (votesNo.toFloat());
+      dialog.setVotingsConcordant (votesAbstention.toFloat());
     }
-    //<- set old Values
 
     int retVal = dialog.exec();
 
@@ -343,7 +459,7 @@ void ReportGeneratorTab::startAgendaWizardTest()
       query3.bindValue(":year", Global::getInstance()->getCurrentYear());
       query3.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
       query3.bindValue(":top_id", top_id);
-      ok = query3.exec();
+      query3.exec();
 
       bool resultFound = false;
       //record found -> update query
@@ -519,203 +635,197 @@ void ReportGeneratorTab::startAgendaWizard()
 
 void ReportGeneratorTab::startCoverpageWizard()
 {
+  QStringList lStringListCoverpageItems;
+  bool coverPageFound = false;
+
+  if (true == getCoverpageItems(lStringListCoverpageItems))
+    coverPageFound = true;
+
+  lStringListCoverpageItems.front();
+  int retCode = QDialog::Accepted;
+  QString coverPageText ("");
+
+  for(int i = 0; i != lStringListCoverpageItems.size() && retCode == QDialog::Accepted; i++)
   {
-    QSqlQuery query(QSqlDatabase::database(mUser));
+    coverPageText = lStringListCoverpageItems[i];
 
-    //get cover page
-    query.prepare("SELECT Protokollvorlage FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-    query.exec();
-
-    bool coverPageFound = false;
-    int retCode = QDialog::Accepted;
-
-    QString coverPageText;
-
-    while (query.next() && retCode == QDialog::Accepted)
+    if (coverPageText.contains("%DatumEinladungsschreiben%"))
     {
-      coverPageText = query.value(0).toString();
-      coverPageFound = true;
-
-      if (coverPageText.contains("%DatumEinladungsschreiben%"))
-      {
-        retCode = processWizardDialog ("Datum des Einladungsschreibens?", "%DatumEinladungsschreiben%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%UhrzeitStartVersammlung%"))
-      {
-        retCode = processWizardDialog ("Wann wurde die Versammlung eröffnet?", "%UhrzeitStartVersammlung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%UhrzeitEndeVersammlung%"))
-      {
-        retCode = processWizardDialog ("Wann wurde die Versammlung beendet?", "%UhrzeitEndeVersammlung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%BeschlussfaehigMarker%"))
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("Wurde die Beschlussfähigkeit geprüft und\nwaren mehr als 50% der MEA durch Anwesenheit\noder Vollmachten vertreten?", "%BeschlussfaehigMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%MEAAnwesend%"))
-      {
-        retCode = processWizardDialog ("Wie viele MEA waren zur Eröffnung\nder Versammlung anwesend?", "%MEAAnwesend%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%Versammlungsleiter%"))
-      {
-        retCode = processWizardDialog ("Wer war der Versammlungsleiter?", "%Versammlungsleiter%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      //this is a bit tricky
-      mMarkerVersammlungsleiterFktSet = false;
-      mMarkerProtokollfuehrerFktSet = false;
-
-      if (coverPageText.contains("%VersammlungsleiterFktVerwalterMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter der Verwalter?", "%VersammlungsleiterFktVerwalterMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%VersammlungsleiterFktMitarbeiterMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter ein Mitarbeiter der Verwaltung?", "%VersammlungsleiterFktMitarbeiterMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%VersammlungsleiterFktWEGMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter ein durch die WEG bestellter Vertreter?", "%VersammlungsleiterFktWEGMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%Protokollfuehrung%"))
-      {
-        retCode = processWizardDialog ("Wer hat das Protokoll geschrieben?", "%Protokollfuehrung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%ProtokollfuehrerFktChef%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer der Verwalter?", "%ProtokollfuehrerFktChef%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%ProtokollfuehrerFktMitarbeiter%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer ein Mitarbeiter der Verwaltung?", "%ProtokollfuehrerFktMitarbeiter%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%ProtokollfuehrerFktWEG%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer ein durch die WEG bestellter Vertreter?", "%ProtokollfuehrerFktWEG%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%Abstimmungsregelung%"))
-      {
-        QStringList list;
-        list << "Handzeichen";
-        list << "Geheime Abstimmung";
-        retCode = processWizardDialog ("Wie erfolgte die Abstimmung?", "%Abstimmungsregelung%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      //ask for advisers
-      QMessageBox::StandardButton reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll unterschrieben?", QMessageBox::Yes|QMessageBox::No);
-      int i = 0;
-      while (reply == QMessageBox::Yes)
-      {
-        i++;
-        QString nameNumber ("%Protokollunterschrift");
-        nameNumber.append (QString::number(i));
-        nameNumber.append ("%");
-        retCode = processWizardDialog("Wer hat das Protokoll unterschrieben (Name)?", nameNumber);
-
-        if (retCode == QDialog::Accepted)
-        {
-          QString nameFktNumber ("%ProtokollunterschriftFkt");
-          nameFktNumber.append (QString::number(i));
-          nameFktNumber.append ("%");
-          retCode = processWizardDialog("In welcher Funktion (Beirat, Eigentümer, Verwaltung...)?", nameFktNumber);
-        }
-
-        reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll von einer weiteren Person unterschrieben?", QMessageBox::Yes|QMessageBox::No);
-      }
+      retCode = processWizardDialog ("Datum des Einladungsschreibens?", "%DatumEinladungsschreiben%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%UhrzeitStartVersammlung%"))
+    {
+      retCode = processWizardDialog ("Wann wurde die Versammlung eröffnet?", "%UhrzeitStartVersammlung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%UhrzeitEndeVersammlung%"))
+    {
+      retCode = processWizardDialog ("Wann wurde die Versammlung beendet?", "%UhrzeitEndeVersammlung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%BeschlussfaehigMarker%"))
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("Wurde die Beschlussfähigkeit geprüft und\nwaren mehr als 50% der MEA durch Anwesenheit\noder Vollmachten vertreten?", "%BeschlussfaehigMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%MEAAnwesend%"))
+    {
+      retCode = processWizardDialog ("Wie viele MEA waren zur Eröffnung\nder Versammlung anwesend?", "%MEAAnwesend%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%Versammlungsleiter%"))
+    {
+      retCode = processWizardDialog ("Wer war der Versammlungsleiter?", "%Versammlungsleiter%");
+      if (retCode != QDialog::Accepted)
+        break;
     }
 
-    query.clear();
-    query.prepare("SELECT obj_inv_deadline FROM Objekt WHERE obj_id = :id");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.exec();
+    //this is a bit tricky
+    mMarkerVersammlungsleiterFktSet = false;
+    mMarkerProtokollfuehrerFktSet = false;
 
-    if (query.next())
+    if (coverPageText.contains("%VersammlungsleiterFktVerwalterMarker%") && mMarkerVersammlungsleiterFktSet == false)
     {
-      if (2 == query.value(0).toInt())
-        StringReplacer::getInstance()->addPair("%Einladungsfrist%", "24 Abs. 4  WEG (2 Wochen)");
-      else
-      {
-        QString value;
-        value.append("Vereinbarung gemäß Gemeinschaftsordnung: ");
-        value.append (QString::number(query.value(0).toInt()));
-        value.append (" Wochen");
-
-        StringReplacer::getInstance()->addPair("%Einladungsfrist%", value);
-      }
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter der Verwalter?", "%VersammlungsleiterFktVerwalterMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%VersammlungsleiterFktMitarbeiterMarker%") && mMarkerVersammlungsleiterFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter ein Mitarbeiter der Verwaltung?", "%VersammlungsleiterFktMitarbeiterMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%VersammlungsleiterFktWEGMarker%") && mMarkerVersammlungsleiterFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter ein durch die WEG bestellter Vertreter?", "%VersammlungsleiterFktWEGMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
     }
 
-    //find and replace generic wildcards
-    //StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+    if (coverPageText.contains("%Protokollfuehrung%"))
+    {
+      retCode = processWizardDialog ("Wer hat das Protokoll geschrieben?", "%Protokollfuehrung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
 
-    if (false == coverPageFound)
-      QMessageBox::information(this, "Fehler", "Interner Fehler: kein Protokolldeckblatt gefunden.");
+    if (coverPageText.contains("%ProtokollfuehrerFktChef%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer der Verwalter?", "%ProtokollfuehrerFktChef%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%ProtokollfuehrerFktMitarbeiter%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer ein Mitarbeiter der Verwaltung?", "%ProtokollfuehrerFktMitarbeiter%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%ProtokollfuehrerFktWEG%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer ein durch die WEG bestellter Vertreter?", "%ProtokollfuehrerFktWEG%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+
+    if (coverPageText.contains("%Abstimmungsregelung%"))
+    {
+      QStringList list;
+      list << "Handzeichen";
+      list << "Geheime Abstimmung";
+      retCode = processWizardDialog ("Wie erfolgte die Abstimmung?", "%Abstimmungsregelung%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+
+    //ask for advisers
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll unterschrieben?", QMessageBox::Yes|QMessageBox::No);
+    int j = 0;
+    while (reply == QMessageBox::Yes)
+    {
+      j++;
+      QString nameNumber ("%Protokollunterschrift");
+      nameNumber.append (QString::number(i));
+      nameNumber.append ("%");
+      retCode = processWizardDialog("Wer hat das Protokoll unterschrieben (Name)?", nameNumber);
+
+      if (retCode == QDialog::Accepted)
+      {
+        QString nameFktNumber ("%ProtokollunterschriftFkt");
+        nameFktNumber.append (QString::number(i));
+        nameFktNumber.append ("%");
+        retCode = processWizardDialog("In welcher Funktion (Beirat, Eigentümer, Verwaltung...)?", nameFktNumber);
+      }
+
+      reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll von einer weiteren Person unterschrieben?", QMessageBox::Yes|QMessageBox::No);
+    }
+  }
+
+  QSqlQuery query(QSqlDatabase::database(mUser));
+  query.clear();
+  query.prepare("SELECT obj_inv_deadline FROM Objekt WHERE obj_id = :id");
+  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  query.exec();
+
+  if (query.next())
+  {
+    if (2 == query.value(0).toInt())
+      StringReplacer::getInstance()->addPair("%Einladungsfrist%", "24 Abs. 4  WEG (2 Wochen)");
     else
     {
-      QMessageBox::StandardButton reply = QMessageBox::question(this, "Fertig!", "Änderungen speichern?", QMessageBox::Yes|QMessageBox::No);
-      if (reply == QMessageBox::Yes)
-      {
-        coverPageText = StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+      QString value;
+      value.append("Vereinbarung gemäß Gemeinschaftsordnung: ");
+      value.append (QString::number(query.value(0).toInt()));
+      value.append (" Wochen");
 
-        //set values
-        query.clear();
-        query.prepare("UPDATE Eigentuemerversammlungen SET Protokollabschrift =:report WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
-        query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-        query.bindValue(":year", Global::getInstance()->getCurrentYear());
-        query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-        query.bindValue(":report", coverPageText);
-        query.exec();
-      }
+      StringReplacer::getInstance()->addPair("%Einladungsfrist%", value);
     }
-    query.clear();
   }
+
+  //find and replace generic wildcards
+  //StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+
+  if (false == coverPageFound)
+    QMessageBox::information(this, "Fehler", "Interner Fehler: kein Protokolldeckblatt gefunden.");
+  else
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Fertig!", "Änderungen speichern?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+      coverPageText = StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+
+      //set values
+      query.clear();
+      query.prepare("UPDATE Eigentuemerversammlungen SET Protokollabschrift =:report WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+      query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+      query.bindValue(":year", Global::getInstance()->getCurrentYear());
+      query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+      query.bindValue(":report", coverPageText);
+      query.exec();
+    }
+  }
+  query.clear();
 }
 
 void ReportGeneratorTab::on_startWizard_clicked()
@@ -896,8 +1006,8 @@ int ReportGeneratorTab::processWizardDialog (QString aDialogText, QString aWildc
 
 void ReportGeneratorTab::on_startAgendaWizard_clicked()
 {
-  //startAgendaWizardTest();
-  startAgendaWizard();
+  startAgendaWizardTest();
+  //startAgendaWizard();
   updateAgendaTable();
 }
 
