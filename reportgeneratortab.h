@@ -43,6 +43,7 @@ private:
   void startAgendaWizard ();
   bool getSavedDecissions (std::vector<QStringList> &stringList);
   bool getAgendaItems (std::vector<QStringList> &stringList);
+  bool getCoverpageItems (QStringList &stringList);
   void updateAgendaTable ();
   void updateReportTemplateTable ();
   void changeAgendaItemSettings (int aId);

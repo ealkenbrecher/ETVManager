@@ -287,6 +287,8 @@ bool ReportGeneratorTab::getSavedDecissions (std::vector<QStringList> &stringLis
 
 bool ReportGeneratorTab::getAgendaItems(std::vector<QStringList> &stringList)
 {
+  stringList.clear();
+
   QSqlQuery query (QSqlDatabase::database(mUser));
 
   query.clear();
@@ -329,6 +331,33 @@ bool ReportGeneratorTab::getAgendaItems(std::vector<QStringList> &stringList)
     strings.clear();
   }
   return true;
+}
+
+bool ReportGeneratorTab::getCoverpageItems (QStringList &stringList)
+{
+  stringList.clear();
+
+  QSqlQuery query(QSqlDatabase::database(mUser));
+
+  //get cover page
+  query.prepare("SELECT Protokollvorlage FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  query.bindValue(":year", Global::getInstance()->getCurrentYear());
+  query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+  query.exec();
+
+  bool coverPageFound = false;
+  int retCode = QDialog::Accepted;
+
+  QString coverPageItem ("");
+
+  while (query.next())
+  {
+    coverPageFound = true;
+    coverPageItem = query.value(0).toString();
+    stringList.push_back(coverPageItem);
+  }
+  return coverPageFound;
 }
 
 void ReportGeneratorTab::startAgendaWizardTest()
@@ -606,203 +635,197 @@ void ReportGeneratorTab::startAgendaWizard()
 
 void ReportGeneratorTab::startCoverpageWizard()
 {
+  QStringList lStringListCoverpageItems;
+  bool coverPageFound = false;
+
+  if (true == getCoverpageItems(lStringListCoverpageItems))
+    coverPageFound = true;
+
+  lStringListCoverpageItems.front();
+  int retCode = QDialog::Accepted;
+  QString coverPageText ("");
+
+  for(int i = 0; i != lStringListCoverpageItems.size() && retCode == QDialog::Accepted; i++)
   {
-    QSqlQuery query(QSqlDatabase::database(mUser));
+    coverPageText = lStringListCoverpageItems[i];
 
-    //get cover page
-    query.prepare("SELECT Protokollvorlage FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-    query.exec();
-
-    bool coverPageFound = false;
-    int retCode = QDialog::Accepted;
-
-    QString coverPageText;
-
-    while (query.next() && retCode == QDialog::Accepted)
+    if (coverPageText.contains("%DatumEinladungsschreiben%"))
     {
-      coverPageText = query.value(0).toString();
-      coverPageFound = true;
-
-      if (coverPageText.contains("%DatumEinladungsschreiben%"))
-      {
-        retCode = processWizardDialog ("Datum des Einladungsschreibens?", "%DatumEinladungsschreiben%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%UhrzeitStartVersammlung%"))
-      {
-        retCode = processWizardDialog ("Wann wurde die Versammlung eröffnet?", "%UhrzeitStartVersammlung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%UhrzeitEndeVersammlung%"))
-      {
-        retCode = processWizardDialog ("Wann wurde die Versammlung beendet?", "%UhrzeitEndeVersammlung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%BeschlussfaehigMarker%"))
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("Wurde die Beschlussfähigkeit geprüft und\nwaren mehr als 50% der MEA durch Anwesenheit\noder Vollmachten vertreten?", "%BeschlussfaehigMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%MEAAnwesend%"))
-      {
-        retCode = processWizardDialog ("Wie viele MEA waren zur Eröffnung\nder Versammlung anwesend?", "%MEAAnwesend%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%Versammlungsleiter%"))
-      {
-        retCode = processWizardDialog ("Wer war der Versammlungsleiter?", "%Versammlungsleiter%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      //this is a bit tricky
-      mMarkerVersammlungsleiterFktSet = false;
-      mMarkerProtokollfuehrerFktSet = false;
-
-      if (coverPageText.contains("%VersammlungsleiterFktVerwalterMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter der Verwalter?", "%VersammlungsleiterFktVerwalterMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%VersammlungsleiterFktMitarbeiterMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter ein Mitarbeiter der Verwaltung?", "%VersammlungsleiterFktMitarbeiterMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%VersammlungsleiterFktWEGMarker%") && mMarkerVersammlungsleiterFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Versammlungsleiter ein durch die WEG bestellter Vertreter?", "%VersammlungsleiterFktWEGMarker%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%Protokollfuehrung%"))
-      {
-        retCode = processWizardDialog ("Wer hat das Protokoll geschrieben?", "%Protokollfuehrung%");
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%ProtokollfuehrerFktChef%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer der Verwalter?", "%ProtokollfuehrerFktChef%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%ProtokollfuehrerFktMitarbeiter%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer ein Mitarbeiter der Verwaltung?", "%ProtokollfuehrerFktMitarbeiter%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-      if (coverPageText.contains("%ProtokollfuehrerFktWEG%") && mMarkerProtokollfuehrerFktSet == false)
-      {
-        QStringList list;
-        list << "Ja";
-        retCode = processWizardDialog ("War der Protokollführer ein durch die WEG bestellter Vertreter?", "%ProtokollfuehrerFktWEG%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      if (coverPageText.contains("%Abstimmungsregelung%"))
-      {
-        QStringList list;
-        list << "Handzeichen";
-        list << "Geheime Abstimmung";
-        retCode = processWizardDialog ("Wie erfolgte die Abstimmung?", "%Abstimmungsregelung%", eCheckBoxDialog, false, list);
-        if (retCode != QDialog::Accepted)
-          break;
-      }
-
-      //ask for advisers
-      QMessageBox::StandardButton reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll unterschrieben?", QMessageBox::Yes|QMessageBox::No);
-      int i = 0;
-      while (reply == QMessageBox::Yes)
-      {
-        i++;
-        QString nameNumber ("%Protokollunterschrift");
-        nameNumber.append (QString::number(i));
-        nameNumber.append ("%");
-        retCode = processWizardDialog("Wer hat das Protokoll unterschrieben (Name)?", nameNumber);
-
-        if (retCode == QDialog::Accepted)
-        {
-          QString nameFktNumber ("%ProtokollunterschriftFkt");
-          nameFktNumber.append (QString::number(i));
-          nameFktNumber.append ("%");
-          retCode = processWizardDialog("In welcher Funktion (Beirat, Eigentümer, Verwaltung...)?", nameFktNumber);
-        }
-
-        reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll von einer weiteren Person unterschrieben?", QMessageBox::Yes|QMessageBox::No);
-      }
+      retCode = processWizardDialog ("Datum des Einladungsschreibens?", "%DatumEinladungsschreiben%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%UhrzeitStartVersammlung%"))
+    {
+      retCode = processWizardDialog ("Wann wurde die Versammlung eröffnet?", "%UhrzeitStartVersammlung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%UhrzeitEndeVersammlung%"))
+    {
+      retCode = processWizardDialog ("Wann wurde die Versammlung beendet?", "%UhrzeitEndeVersammlung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%BeschlussfaehigMarker%"))
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("Wurde die Beschlussfähigkeit geprüft und\nwaren mehr als 50% der MEA durch Anwesenheit\noder Vollmachten vertreten?", "%BeschlussfaehigMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%MEAAnwesend%"))
+    {
+      retCode = processWizardDialog ("Wie viele MEA waren zur Eröffnung\nder Versammlung anwesend?", "%MEAAnwesend%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%Versammlungsleiter%"))
+    {
+      retCode = processWizardDialog ("Wer war der Versammlungsleiter?", "%Versammlungsleiter%");
+      if (retCode != QDialog::Accepted)
+        break;
     }
 
-    query.clear();
-    query.prepare("SELECT obj_inv_deadline FROM Objekt WHERE obj_id = :id");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.exec();
+    //this is a bit tricky
+    mMarkerVersammlungsleiterFktSet = false;
+    mMarkerProtokollfuehrerFktSet = false;
 
-    if (query.next())
+    if (coverPageText.contains("%VersammlungsleiterFktVerwalterMarker%") && mMarkerVersammlungsleiterFktSet == false)
     {
-      if (2 == query.value(0).toInt())
-        StringReplacer::getInstance()->addPair("%Einladungsfrist%", "24 Abs. 4  WEG (2 Wochen)");
-      else
-      {
-        QString value;
-        value.append("Vereinbarung gemäß Gemeinschaftsordnung: ");
-        value.append (QString::number(query.value(0).toInt()));
-        value.append (" Wochen");
-
-        StringReplacer::getInstance()->addPair("%Einladungsfrist%", value);
-      }
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter der Verwalter?", "%VersammlungsleiterFktVerwalterMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%VersammlungsleiterFktMitarbeiterMarker%") && mMarkerVersammlungsleiterFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter ein Mitarbeiter der Verwaltung?", "%VersammlungsleiterFktMitarbeiterMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%VersammlungsleiterFktWEGMarker%") && mMarkerVersammlungsleiterFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Versammlungsleiter ein durch die WEG bestellter Vertreter?", "%VersammlungsleiterFktWEGMarker%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
     }
 
-    //find and replace generic wildcards
-    //StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+    if (coverPageText.contains("%Protokollfuehrung%"))
+    {
+      retCode = processWizardDialog ("Wer hat das Protokoll geschrieben?", "%Protokollfuehrung%");
+      if (retCode != QDialog::Accepted)
+        break;
+    }
 
-    if (false == coverPageFound)
-      QMessageBox::information(this, "Fehler", "Interner Fehler: kein Protokolldeckblatt gefunden.");
+    if (coverPageText.contains("%ProtokollfuehrerFktChef%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer der Verwalter?", "%ProtokollfuehrerFktChef%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%ProtokollfuehrerFktMitarbeiter%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer ein Mitarbeiter der Verwaltung?", "%ProtokollfuehrerFktMitarbeiter%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+    if (coverPageText.contains("%ProtokollfuehrerFktWEG%") && mMarkerProtokollfuehrerFktSet == false)
+    {
+      QStringList list;
+      list << "Ja";
+      retCode = processWizardDialog ("War der Protokollführer ein durch die WEG bestellter Vertreter?", "%ProtokollfuehrerFktWEG%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+
+    if (coverPageText.contains("%Abstimmungsregelung%"))
+    {
+      QStringList list;
+      list << "Handzeichen";
+      list << "Geheime Abstimmung";
+      retCode = processWizardDialog ("Wie erfolgte die Abstimmung?", "%Abstimmungsregelung%", eCheckBoxDialog, false, list);
+      if (retCode != QDialog::Accepted)
+        break;
+    }
+
+    //ask for advisers
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll unterschrieben?", QMessageBox::Yes|QMessageBox::No);
+    int j = 0;
+    while (reply == QMessageBox::Yes)
+    {
+      j++;
+      QString nameNumber ("%Protokollunterschrift");
+      nameNumber.append (QString::number(i));
+      nameNumber.append ("%");
+      retCode = processWizardDialog("Wer hat das Protokoll unterschrieben (Name)?", nameNumber);
+
+      if (retCode == QDialog::Accepted)
+      {
+        QString nameFktNumber ("%ProtokollunterschriftFkt");
+        nameFktNumber.append (QString::number(i));
+        nameFktNumber.append ("%");
+        retCode = processWizardDialog("In welcher Funktion (Beirat, Eigentümer, Verwaltung...)?", nameFktNumber);
+      }
+
+      reply = QMessageBox::question(this, "Protokollunterschrift", "Wurde das Protokoll von einer weiteren Person unterschrieben?", QMessageBox::Yes|QMessageBox::No);
+    }
+  }
+
+  QSqlQuery query(QSqlDatabase::database(mUser));
+  query.clear();
+  query.prepare("SELECT obj_inv_deadline FROM Objekt WHERE obj_id = :id");
+  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+  query.exec();
+
+  if (query.next())
+  {
+    if (2 == query.value(0).toInt())
+      StringReplacer::getInstance()->addPair("%Einladungsfrist%", "24 Abs. 4  WEG (2 Wochen)");
     else
     {
-      QMessageBox::StandardButton reply = QMessageBox::question(this, "Fertig!", "Änderungen speichern?", QMessageBox::Yes|QMessageBox::No);
-      if (reply == QMessageBox::Yes)
-      {
-        coverPageText = StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+      QString value;
+      value.append("Vereinbarung gemäß Gemeinschaftsordnung: ");
+      value.append (QString::number(query.value(0).toInt()));
+      value.append (" Wochen");
 
-        //set values
-        query.clear();
-        query.prepare("UPDATE Eigentuemerversammlungen SET Protokollabschrift =:report WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
-        query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-        query.bindValue(":year", Global::getInstance()->getCurrentYear());
-        query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
-        query.bindValue(":report", coverPageText);
-        query.exec();
-      }
+      StringReplacer::getInstance()->addPair("%Einladungsfrist%", value);
     }
-    query.clear();
   }
+
+  //find and replace generic wildcards
+  //StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+
+  if (false == coverPageFound)
+    QMessageBox::information(this, "Fehler", "Interner Fehler: kein Protokolldeckblatt gefunden.");
+  else
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Fertig!", "Änderungen speichern?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+      coverPageText = StringReplacer::getInstance()->findAndReplaceWildcards(coverPageText);
+
+      //set values
+      query.clear();
+      query.prepare("UPDATE Eigentuemerversammlungen SET Protokollabschrift =:report WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
+      query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
+      query.bindValue(":year", Global::getInstance()->getCurrentYear());
+      query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+      query.bindValue(":report", coverPageText);
+      query.exec();
+    }
+  }
+  query.clear();
 }
 
 void ReportGeneratorTab::on_startWizard_clicked()
