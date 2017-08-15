@@ -5,7 +5,7 @@
 #include "global.h"
 
 class QSqlDatabase;
-class QSqlQueryModel;
+class QSqlQueryModelAgendaView;
 
 namespace Ui {
 class AgendaTab;
@@ -34,10 +34,11 @@ private slots:
     void on_moveAgendaItemDown_clicked();
 
 private:
+    void initAgendaTable ();
     void updateAgendaTable ();
     void changeAgendaItemSettings (int aTopId);
     Ui::AgendaTab *ui;
-    QSqlQueryModel* mQueryModel;
+    QSqlQueryModelAgendaView* mQueryModelAgendaView;
     QString mUser;
 };
 

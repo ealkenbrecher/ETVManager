@@ -80,7 +80,6 @@ void patternEditorReport::changePatternItemSettings (int aId)
   int selectedRow = ui->tablePatterns->selectionModel()->selection().indexes().value(0).row();
   PatternEditorReportItemSettings itemSettings (this);
 
-  //Database::getInstance()->getDatabase()->open();
   QSqlQuery query (QSqlDatabase::database(mUser));
   query.prepare("SELECT ueberschrift, deckblatt FROM ReportPatterns WHERE id = :id");
 

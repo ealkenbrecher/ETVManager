@@ -30,7 +30,8 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     decissionlibrarytab.h \
     decissionlibraryeditdialog.h \
     global.h \
-    databaseimpl.h
+    databaseimpl.h \
+    qsqlquerymodelagendaview.h
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     mainview.cpp \
     propertysettings.cpp \
@@ -57,7 +58,8 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     decissionlibrarytab.cpp \
     decissionlibraryeditdialog.cpp \
     global.cpp \
-    databaseimpl.cpp
+    databaseimpl.cpp \
+    qsqlquerymodelagendaview.cpp
 
 FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
     mainview.ui \

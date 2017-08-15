@@ -6,7 +6,7 @@
 #include "agendasettings.h"
 #include <string>
 #include "agendaitemsettings.h"
-#include "qsqlquerymodelrichtext.h"
+#include "qsqlquerymodelagendaview.h"
 #include <QMenu>
 #include "global.h"
 
@@ -15,15 +15,17 @@ AgendaTab::AgendaTab(QWidget *parent) :
     ui(new Ui::AgendaTab)
 {
   ui->setupUi(this);
-  mQueryModel = 0;
+  mQueryModelAgendaView = 0;
 
   ui->tableAgenda->horizontalHeader()->setStretchLastSection(true);
+
+  initAgendaTable();
 }
 
 AgendaTab::~AgendaTab()
 {
-  if (0 != mQueryModel)
-      delete mQueryModel;
+  if (0 != mQueryModelAgendaView)
+      delete mQueryModelAgendaView;
 
   delete ui;
 }
@@ -37,7 +39,6 @@ void AgendaTab::refreshOnSelected ()
   }
 
   ui->tableAgenda->setColumnWidth(0, 40);
-
   updateAgendaTable();
 }
 
@@ -51,72 +52,49 @@ void AgendaTab::setParameter (settingsType aParameter, QString aSetting)
   }
 }
 
-void AgendaTab::updateAgendaTable ()
+void AgendaTab::initAgendaTable ()
 {
-  QSqlQuery query (QSqlDatabase::database(mUser));
-  query.prepare("SELECT top_id, top_header FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr");
-  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-  query.bindValue(":year", Global::getInstance()->getCurrentYear());
-  query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
-  query.exec();
+  if (0 == mQueryModelAgendaView)
+  {
+    mQueryModelAgendaView = new QSqlQueryModelAgendaView ();
+    mQueryModelAgendaView->setDbConnectionName(mUser);
+    mQueryModelAgendaView->setPropertyId(Global::getInstance()->getCurrentPropertyId());
+    mQueryModelAgendaView->setYear(Global::getInstance()->getCurrentYear());
+    mQueryModelAgendaView->setAgendaNum(Global::getInstance()->getCurrentEtvNumber());
+    mQueryModelAgendaView->updateData ();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
-  mQueryModel->setQuery(query);
-  mQueryModel->setHeaderData(0, Qt::Horizontal, tr("Nr."));
-  mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));
+    ui->tableAgenda->setModel(mQueryModelAgendaView);
+    ui->tableAgenda->horizontalHeader()->resizeSection(0, 50);
+    ui->tableAgenda->show();
+  }
+}
 
-  ui->tableAgenda->setModel(mQueryModel);
-  ui->tableAgenda->horizontalHeader()->resizeSection(0, 50);
-  ui->tableAgenda->show();
+void AgendaTab::updateAgendaTable()
+{
+  if (0 != mQueryModelAgendaView)
+  {
+    mQueryModelAgendaView->setDbConnectionName(mUser);
+    mQueryModelAgendaView->setPropertyId(Global::getInstance()->getCurrentPropertyId());
+    mQueryModelAgendaView->setYear(Global::getInstance()->getCurrentYear());
+    mQueryModelAgendaView->setAgendaNum(Global::getInstance()->getCurrentEtvNumber());
+    mQueryModelAgendaView->updateData ();
+  }
 }
 
 void AgendaTab::changeAgendaItemSettings (int aTopId)
 {
   AgendaItemSettings itemSettings (this);
-  itemSettings.setUser (mUser);
-  itemSettings.refresh();
+  itemSettings.setDbConnectionName(mUser);
+  itemSettings.setPropertyId(Global::getInstance()->getCurrentPropertyId());
+  itemSettings.setYear(Global::getInstance()->getCurrentYear());
+  itemSettings.setAgendaNum(Global::getInstance()->getCurrentEtvNumber());
+  itemSettings.setAgendaItemId(aTopId);
 
-  ////Global::getInstance()->getDatabase()->open();
-  QSqlQuery query (QSqlDatabase::database(mUser));
-  query.prepare("SELECT top_header, top_descr, top_vorschlag, top_vorschlag2, top_vorschlag3, beschlussArt FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :topid");
+  itemSettings.update();
+  itemSettings.show();
 
-  query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-  query.bindValue(":year", Global::getInstance()->getCurrentYear());
-  query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
-  query.bindValue(":topid", aTopId);
-  query.exec();
-
-  if (query.next())
-  {
-    itemSettings.setHeader(query.value(0).toString());
-    itemSettings.setDescription(query.value(1).toString());
-    itemSettings.setSuggestion(query.value(2).toString());
-    itemSettings.setSuggestion2(query.value(3).toString());
-    itemSettings.setSuggestion3(query.value(4).toString());
-    itemSettings.setItemType(query.value(5).toInt());
-  }
-
-  //abort -> do not save settings
   if (itemSettings.exec() != QDialog::Rejected)
-  {
-    ////Global::getInstance()->getDatabase()->open();
-    QSqlQuery query (QSqlDatabase::database(mUser));
-    //set values
-    query.prepare("UPDATE Tagesordnungspunkte SET top_header =:header, top_descr =:descr, top_vorschlag =:suggestion, top_vorschlag2 =:suggestion2, top_vorschlag3 =:suggestion3, beschlussArt =:itemType WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":header", itemSettings.getHeader());
-    query.bindValue(":descr", itemSettings.getDescription());
-    query.bindValue(":suggestion", itemSettings.getSuggestion());
-    query.bindValue(":suggestion2", itemSettings.getSuggestion2());
-    query.bindValue(":suggestion3", itemSettings.getSuggestion3());
-    query.bindValue(":topid", aTopId);
-    query.bindValue(":itemType", itemSettings.getItemType());
-    query.exec();
-
     updateAgendaTable();
-  }
 }
 
 void AgendaTab::on_tableAgenda_doubleClicked(const QModelIndex &index)
@@ -130,10 +108,10 @@ void AgendaTab::on_tableAgenda_doubleClicked(const QModelIndex &index)
 
 void AgendaTab::on_addEntry_clicked()
 {
-  AgendaItemSettings itemSettings (this);
+/*  AgendaItemSettings itemSettings (this);
 
-  itemSettings.setUser(mUser);
-  itemSettings.refresh();
+  itemSettings.setDbConnectionName(mUser);
+  itemSettings.update();
 
   //abort -> do not save settings
   if (itemSettings.exec() != QDialog::Accepted)
@@ -167,7 +145,7 @@ void AgendaTab::on_addEntry_clicked()
     }
 
     updateAgendaTable();
-  }
+  }*/
 }
 
 void AgendaTab::on_editEntry_clicked()

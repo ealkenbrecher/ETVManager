@@ -44,15 +44,39 @@ void AgendaItemSettings::setItemType (int aType)
     ui->ohneBeschlussoption->setChecked(true);
 }
 
-void AgendaItemSettings::setUser (QString rUser)
+void AgendaItemSettings::update ()
 {
-  mUser = rUser;
+  refreshAgendaItem ();
+  updateTextPatterns ();
 }
 
-void AgendaItemSettings::refresh ()
+void AgendaItemSettings::refreshAgendaItem ()
 {
   //verfuegbare Vorlagen aus Datenbank holen
-  QSqlQuery query (QSqlDatabase::database(mUser));
+  QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
+  query.prepare("SELECT top_header, top_descr, top_vorschlag, top_vorschlag2, top_vorschlag3, beschlussArt FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :topid");
+
+  query.bindValue(":id", this->mPropertyId);
+  query.bindValue(":year", this->mYear);
+  query.bindValue(":etvnr", this->mAgendaNum);
+  query.bindValue(":topid", this->mAgendaItemId);
+  query.exec();
+
+  if (query.next())
+  {
+    this->setHeader(query.value(0).toString());
+    this->setDescription(query.value(1).toString());
+    this->setSuggestion(query.value(2).toString());
+    this->setSuggestion2(query.value(3).toString());
+    this->setSuggestion3(query.value(4).toString());
+    this->setItemType(query.value(5).toInt());
+  }
+}
+
+void AgendaItemSettings::updateTextPatterns ()
+{
+  //verfuegbare Vorlagen aus Datenbank holen
+  QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
   query.prepare("SELECT bezeichnung, id from AgendaPatterns ORDER BY bezeichnung ASC");
   query.exec();
 
@@ -135,7 +159,7 @@ void AgendaItemSettings::on_insertPattern_clicked()
 
     //get values
     //Liegenschaften aus Datenbank holen
-    QSqlQuery query (QSqlDatabase::database(mUser));
+    QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
     query.prepare("SELECT ueberschrift, beschreibung, beschlussvorschlag, beschlussvorschlag2, beschlussvorschlag3, beschlussArt from AgendaPatterns WHERE id=:patternId");
     query.bindValue(":patternId", patternId);
     query.exec();
@@ -174,7 +198,7 @@ QString AgendaItemSettings::replaceWildcards (QString in)
   {
       //not too smart to do a database query here, but for now ok:
       //Global::getInstance()->getDatabase()->open();
-      QSqlQuery query (QSqlDatabase::database(mUser));
+      QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
 
       //get years
       query.prepare("SELECT * FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
@@ -261,4 +285,22 @@ QString AgendaItemSettings::replaceWildcards (QString in)
       in.replace(QString("%BeiratMitglied2%"), "-");
   }
   return in;
+}
+
+void AgendaItemSettings::on_buttonBox_accepted()
+{
+  QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
+  //set values
+  query.prepare("UPDATE Tagesordnungspunkte SET top_header =:header, top_descr =:descr, top_vorschlag =:suggestion, top_vorschlag2 =:suggestion2, top_vorschlag3 =:suggestion3, beschlussArt =:itemType WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
+  query.bindValue(":id", mPropertyId);
+  query.bindValue(":year", mYear);
+  query.bindValue(":etvnum", mAgendaNum);
+  query.bindValue(":header", this->getHeader());
+  query.bindValue(":descr", this->getDescription());
+  query.bindValue(":suggestion", this->getSuggestion());
+  query.bindValue(":suggestion2", this->getSuggestion2());
+  query.bindValue(":suggestion3", this->getSuggestion3());
+  query.bindValue(":topid", mAgendaItemId);
+  query.bindValue(":itemType", this->getItemType());
+  query.exec();
 }
