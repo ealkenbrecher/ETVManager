@@ -11,6 +11,11 @@ QSqlQueryModelImpl::QSqlQueryModelImpl(QObject *parent)
   mAgendaNum = INVALID;
 }
 
+QSqlQueryModelImpl::~QSqlQueryModelImpl()
+{
+
+}
+
 void QSqlQueryModelImpl::setDbConnectionName (QString &dbName)
 {
   mDbConnectionName = dbName;
@@ -31,7 +36,7 @@ void QSqlQueryModelImpl::setAgendaNum (int agendaNum)
   mAgendaNum = agendaNum;
 }
 
-void QSqlQueryModelImpl::moveRowUp (int aSourceRow)
+/*void QSqlQueryModelImpl::moveRowUp (int aSourceRow)
 {
 
 }
@@ -39,7 +44,7 @@ void QSqlQueryModelImpl::moveRowUp (int aSourceRow)
 void QSqlQueryModelImpl::moveRowDown (int aSourceRow)
 {
 
-}
+}*/
 
 QVariant QSqlQueryModelImpl::data(const QModelIndex &index, int role) const
 {
