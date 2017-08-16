@@ -3,7 +3,7 @@
 #include "global.h"
 
 QSqlQueryModelAgendaView::QSqlQueryModelAgendaView(QObject *parent) :
-  QSqlQueryModelRichtext(parent)
+  QSqlQueryModelImpl(parent)
 {
 
 }
@@ -24,7 +24,7 @@ bool QSqlQueryModelAgendaView::updateData ()
   return result;
 }
 
-bool QSqlQueryModelAgendaView::deleteEntry (int aItemId)
+bool QSqlQueryModelAgendaView::removeRow (int aItemId)
 {
   QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
   query.prepare("DELETE FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :topid");

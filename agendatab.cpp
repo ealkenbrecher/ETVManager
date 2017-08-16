@@ -151,7 +151,7 @@ void AgendaTab::on_deleteEntry_clicked()
       int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
       int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
 
-      mQueryModelAgendaView->deleteEntry(top_id);
+      mQueryModelAgendaView->removeRow(top_id);
 
       updateAgendaTable();
       ui->tableAgenda->setFocus();
@@ -173,6 +173,18 @@ void AgendaTab::on_deleteEntry_clicked()
 void AgendaTab::on_moveAgendaItemUp_clicked()
 {
   int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
+  int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
+
+  if (1 == top_id)
+  {
+    QMessageBox::information(this, "Fehler", "Tagesordnungspunkt kann nicht nach oben verschoben werden.");
+  }
+  else
+  {
+    ;//mQueryModelAgendaView->moveRow()
+  }
+
+  /*int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
   int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
 
   if (1 == top_id)
@@ -210,8 +222,7 @@ void AgendaTab::on_moveAgendaItemUp_clicked()
 
     updateAgendaTable();
     ui->tableAgenda->setFocus();
-    ui->tableAgenda->selectRow(top_id - 2);
-  }
+    ui->tableAgenda->selectRow(top_id - 2);*/
 }
 
 void AgendaTab::on_moveAgendaItemDown_clicked()

@@ -6,7 +6,7 @@
 #include "global.h"
 
 class QSqlDatabase;
-class QSqlQueryModelRichtext;
+class QSqlQueryModelImpl;
 
 namespace Ui {
   class DecissionLibraryTab;
@@ -30,8 +30,8 @@ private:
   void updateAgendaTable ();
   void changeAgendaItemSettings (int aId);
   Ui::DecissionLibraryTab *ui;
-  QSqlQueryModelRichtext* mQueryModel;
-  QSqlQueryModelRichtext* mQueryModelReportTemplate;
+  QSqlQueryModelImpl* mQueryModel;
+  QSqlQueryModelImpl* mQueryModelReportTemplate;
   QString mUser;
 };
 

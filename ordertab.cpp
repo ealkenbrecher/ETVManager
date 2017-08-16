@@ -6,7 +6,7 @@
 #include "agendasettings.h"
 #include <string>
 #include "orderitemsettings.h"
-#include "qsqlquerymodelrichtext.h"
+#include "QSqlQueryModelImpl.h"
 #include <QMenu>
 #include "propertysettings.h"
 #include "patterneditorreportitemsettings.h"
@@ -78,7 +78,7 @@ void OrderTab::updateAgendaTable ()
   query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
   mQueryModel->setHeaderData(0, Qt::Horizontal, tr("Nr."));
   mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));
@@ -98,7 +98,7 @@ void OrderTab::updateReportTemplateTable ()
   query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
   query.exec();
 
-  mQueryModelReportTemplate = new QSqlQueryModelRichtext ();
+  mQueryModelReportTemplate = new QSqlQueryModelImpl ();
   mQueryModelReportTemplate->setQuery(query);
   //mQueryModelReportTemplate->setHeaderData(0, Qt::Horizontal, tr("Bezeichnung"));
 

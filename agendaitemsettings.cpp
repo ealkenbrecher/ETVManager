@@ -2,7 +2,7 @@
 #include "ui_agendaitemsettings.h"
 #include <QSql>
 #include <QMessageBox>
-#include "qsqlquerymodelrichtext.h"
+#include "QSqlQueryModelImpl.h"
 #include "stringreplacer.h"
 #include <QSqlQuery>
 #include <global.h>
@@ -80,7 +80,7 @@ void AgendaItemSettings::updateTextPatterns ()
   query.prepare("SELECT bezeichnung, id from AgendaPatterns ORDER BY bezeichnung ASC");
   query.exec();
 
-  m_model = new QSqlQueryModelRichtext ();
+  m_model = new QSqlQueryModelImpl ();
   m_model->setQuery(query);
   //Comboxbox mit Daten fuellen
   ui->patterns->setModel(m_model);

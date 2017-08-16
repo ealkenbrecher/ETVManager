@@ -9,7 +9,7 @@
 #include "wizarddialogbox.h"
 #include "global.h"
 
-class QSqlQueryModelRichtext;
+class QSqlQueryModelImpl;
 
 namespace Ui {
   class ReportGeneratorTab;
@@ -52,8 +52,8 @@ private:
   Ui::ReportGeneratorTab *ui;
   bool mMarkerVersammlungsleiterFktSet;
   bool mMarkerProtokollfuehrerFktSet;
-  QSqlQueryModelRichtext* mQueryModel;
-  QSqlQueryModelRichtext* mQueryModelReportTemplate;
+  QSqlQueryModelImpl* mQueryModel;
+  QSqlQueryModelImpl* mQueryModelReportTemplate;
   std::vector<QStringList> mStringListVector;
   QString mUser;
 };

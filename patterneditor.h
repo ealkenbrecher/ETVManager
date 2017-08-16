@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-class QSqlQueryModelRichtext;
+class QSqlQueryModelImpl;
 
 namespace Ui {
   class PatternEditor;
@@ -28,7 +28,7 @@ private slots:
 private:
   void changePatternItemSettings (int aId);
   Ui::PatternEditor *ui;
-  QSqlQueryModelRichtext* mQueryModel;
+  QSqlQueryModelImpl* mQueryModel;
   QString mUser;
 };
 

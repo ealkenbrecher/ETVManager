@@ -31,7 +31,7 @@ void patternEditorReport::updatePatternTable()
   query.prepare("SELECT id, ueberschrift, deckblatt FROM ReportPatterns");
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
 
   mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));

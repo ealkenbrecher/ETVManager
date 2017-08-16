@@ -6,7 +6,7 @@
 #include <QTextDocument>
 #include "votingdialog.h"
 #include "global.h"
-#include "qsqlquerymodelrichtext.h"
+#include "QSqlQueryModelImpl.h"
 #include "orderitemsettings.h"
 #include "patterneditorreportitemsettings.h"
 #include "stringreplacer.h"
@@ -82,7 +82,7 @@ void ReportGeneratorTab::updateAgendaTable ()
   query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
   mQueryModel->setHeaderData(0, Qt::Horizontal, tr("Nr."));
   mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));
@@ -102,7 +102,7 @@ void ReportGeneratorTab::updateReportTemplateTable ()
   query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
   query.exec();
 
-  mQueryModelReportTemplate = new QSqlQueryModelRichtext ();
+  mQueryModelReportTemplate = new QSqlQueryModelImpl ();
   mQueryModelReportTemplate->setQuery(query);
 
   ui->tableReportTemplate->setModel(mQueryModelReportTemplate);

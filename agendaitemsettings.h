@@ -7,7 +7,7 @@ namespace Ui {
 class AgendaItemSettings;
 }
 
-class QSqlQueryModelRichtext;
+class QSqlQueryModelImpl;
 
 namespace AgendaItemDialogMode {
   enum type {
@@ -56,7 +56,7 @@ private:
 
     QString replaceWildcards (QString in);
     Ui::AgendaItemSettings *ui;
-    QSqlQueryModelRichtext* m_model;
+    QSqlQueryModelImpl* m_model;
 
     QString mDbConnectionName;
     int mPropertyId;

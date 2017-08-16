@@ -1,17 +1,15 @@
 #ifndef QSQLQUERYMODELAGENDAVIEW_H
 #define QSQLQUERYMODELAGENDAVIEW_H
 
-#include "QSqlQueryModelRichtext.h"
+#include "QSqlQueryModelImpl.h"
 
-class QSqlQueryModelAgendaView : public QSqlQueryModelRichtext
+class QSqlQueryModelAgendaView : public QSqlQueryModelImpl
 {
   Q_OBJECT
 public:
   explicit QSqlQueryModelAgendaView(QObject *parent = 0);
   bool updateData ();
-  bool deleteEntry (int aItemId);
-
-signals:
+  bool removeRow (int aItemId);
 
 public slots:
 
