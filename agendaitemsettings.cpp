@@ -290,17 +290,38 @@ QString AgendaItemSettings::replaceWildcards (QString in)
 void AgendaItemSettings::on_buttonBox_accepted()
 {
   QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
-  //set values
-  query.prepare("UPDATE Tagesordnungspunkte SET top_header =:header, top_descr =:descr, top_vorschlag =:suggestion, top_vorschlag2 =:suggestion2, top_vorschlag3 =:suggestion3, beschlussArt =:itemType WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
-  query.bindValue(":id", mPropertyId);
-  query.bindValue(":year", mYear);
-  query.bindValue(":etvnum", mAgendaNum);
-  query.bindValue(":header", this->getHeader());
-  query.bindValue(":descr", this->getDescription());
-  query.bindValue(":suggestion", this->getSuggestion());
-  query.bindValue(":suggestion2", this->getSuggestion2());
-  query.bindValue(":suggestion3", this->getSuggestion3());
-  query.bindValue(":topid", mAgendaItemId);
-  query.bindValue(":itemType", this->getItemType());
-  query.exec();
+
+  if (mType == AgendaItemDialogMode::update)
+  {
+    //update item
+    query.prepare("UPDATE Tagesordnungspunkte SET top_header =:header, top_descr =:descr, top_vorschlag =:suggestion, top_vorschlag2 =:suggestion2, top_vorschlag3 =:suggestion3, beschlussArt =:itemType WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
+    query.bindValue(":id", mPropertyId);
+    query.bindValue(":year", mYear);
+    query.bindValue(":etvnum", mAgendaNum);
+    query.bindValue(":header", this->getHeader());
+    query.bindValue(":descr", this->getDescription());
+    query.bindValue(":suggestion", this->getSuggestion());
+    query.bindValue(":suggestion2", this->getSuggestion2());
+    query.bindValue(":suggestion3", this->getSuggestion3());
+    query.bindValue(":topid", mAgendaItemId);
+    query.bindValue(":itemType", this->getItemType());
+    query.exec();
+  }
+  else if (mType == AgendaItemDialogMode::insert)
+  {
+    //insert item
+    query.prepare("INSERT INTO Tagesordnungspunkte (obj_id, wi_jahr, top_id, etv_nr, top_header, top_descr, top_vorschlag, top_vorschlag2, top_vorschlag3, beschlussArt) VALUES (:id, :year, :topid, :etvnum, :header, :descr, :suggestion, :suggestion2, :suggestion3, :itemType)");
+    query.bindValue(":id", mPropertyId);
+    query.bindValue(":year", mYear);
+    query.bindValue(":etvnum", mAgendaNum);
+    query.bindValue(":header", this->getHeader());
+    query.bindValue(":descr", this->getDescription());
+    query.bindValue(":suggestion", this->getSuggestion());
+    query.bindValue(":suggestion2", this->getSuggestion2());
+    query.bindValue(":suggestion3", this->getSuggestion3());
+    query.bindValue(":itemType", this->getItemType());
+    query.bindValue(":topid", mAgendaItemId);
+    query.exec();
+  }
+  return;
 }

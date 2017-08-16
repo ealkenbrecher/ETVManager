@@ -84,6 +84,7 @@ void AgendaTab::updateAgendaTable()
 void AgendaTab::changeAgendaItemSettings (int aTopId)
 {
   AgendaItemSettings itemSettings (this);
+  itemSettings.setdialogMode(AgendaItemDialogMode::update);
   itemSettings.setDbConnectionName(mUser);
   itemSettings.setPropertyId(Global::getInstance()->getCurrentPropertyId());
   itemSettings.setYear(Global::getInstance()->getCurrentYear());
@@ -108,44 +109,22 @@ void AgendaTab::on_tableAgenda_doubleClicked(const QModelIndex &index)
 
 void AgendaTab::on_addEntry_clicked()
 {
-/*  AgendaItemSettings itemSettings (this);
-
+  AgendaItemSettings itemSettings (this);
+  itemSettings.setdialogMode(AgendaItemDialogMode::insert);
   itemSettings.setDbConnectionName(mUser);
+  itemSettings.setPropertyId(Global::getInstance()->getCurrentPropertyId());
+  itemSettings.setYear(Global::getInstance()->getCurrentYear());
+  itemSettings.setAgendaNum(Global::getInstance()->getCurrentEtvNumber());
+
+  //set next id for new entry
+  if (0 != ui->tableAgenda->model())
+    itemSettings.setAgendaItemId(ui->tableAgenda->model()->rowCount() + 1);
+
   itemSettings.update();
+  itemSettings.show();
 
-  //abort -> do not save settings
-  if (itemSettings.exec() != QDialog::Accepted)
-  {
-    return;
-  }
-  else
-  {
-    QSqlQuery query (QSqlDatabase::database(mUser));
-    //set values
-    query.prepare("INSERT INTO Tagesordnungspunkte (obj_id, wi_jahr, top_id, etv_nr, top_header, top_descr, top_vorschlag, top_vorschlag2, top_vorschlag3, beschlussArt) VALUES (:id, :year, :topid, :etvnum, :header, :descr, :suggestion, :suggestion2, :suggestion3, :type)");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":header", itemSettings.getHeader());
-    query.bindValue(":descr", itemSettings.getDescription());
-    query.bindValue(":suggestion", itemSettings.getSuggestion());
-    query.bindValue(":suggestion2", itemSettings.getSuggestion2());
-    query.bindValue(":suggestion3", itemSettings.getSuggestion3());
-    query.bindValue(":type", itemSettings.getItemType());
-
-    //fix empty table crash
-    if (0 != ui->tableAgenda->model())
-    {
-      query.bindValue(":topid", ui->tableAgenda->model()->rowCount() + 1);
-      query.exec();
-    }
-    else
-    {
-      qDebug () << "top id cannot be set. Abort";
-    }
-
+  if (itemSettings.exec() != QDialog::Rejected)
     updateAgendaTable();
-  }*/
 }
 
 void AgendaTab::on_editEntry_clicked()
@@ -172,44 +151,7 @@ void AgendaTab::on_deleteEntry_clicked()
       int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
       int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
 
-      //Global::getInstance()->getDatabase()->open();
-      QSqlQuery query (QSqlDatabase::database(mUser));
-      query.prepare("DELETE FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :topid");
-
-      query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-      query.bindValue(":year", Global::getInstance()->getCurrentYear());
-      query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
-      query.bindValue(":topid", top_id);
-      query.exec();
-
-      bool next = true;
-
-      while (true == next)
-      {
-        top_id++;
-
-        //check, if there is a top_id with a higher id
-        query.prepare("SELECT top_id FROM Tagesordnungspunkte WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :topid");
-        query.bindValue(":topid", top_id);
-        query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-        query.bindValue(":year", Global::getInstance()->getCurrentYear());
-        query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
-        query.exec();
-
-        //higher id available -> set new id
-        if (query.next ())
-        {
-          query.prepare("UPDATE Tagesordnungspunkte SET top_id = :newid WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :oldid");
-          query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-          query.bindValue(":year", Global::getInstance()->getCurrentYear());
-          query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
-          query.bindValue(":oldid", top_id);
-          query.bindValue(":newid", top_id - 1);
-          query.exec();
-        }
-        else
-          next = false;
-      }
+      mQueryModelAgendaView->deleteEntry(top_id);
 
       updateAgendaTable();
       ui->tableAgenda->setFocus();

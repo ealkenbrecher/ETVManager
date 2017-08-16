@@ -9,6 +9,13 @@ class AgendaItemSettings;
 
 class QSqlQueryModelRichtext;
 
+namespace AgendaItemDialogMode {
+  enum type {
+    update,
+    insert,
+  };
+}
+
 class AgendaItemSettings : public QDialog
 {
     Q_OBJECT
@@ -22,6 +29,7 @@ public:
     void setYear(int aYear) {mYear = aYear;};
     void setAgendaNum(int aAgendaNum) {mAgendaNum = aAgendaNum;};
     void setAgendaItemId(int aAgendaItemId) {mAgendaItemId = aAgendaItemId;};
+    void setdialogMode(AgendaItemDialogMode::type aType) {mType = aType;};
 
     QString getHeader ();
     QString getDescription ();
@@ -55,6 +63,7 @@ private:
     int mYear;
     int mAgendaNum;
     int mAgendaItemId;
+    AgendaItemDialogMode::type mType;
 
 };
 

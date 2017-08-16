@@ -8,11 +8,15 @@ class QSqlQueryModelAgendaView : public QSqlQueryModelRichtext
   Q_OBJECT
 public:
   explicit QSqlQueryModelAgendaView(QObject *parent = 0);
-  void updateData ();
+  bool updateData ();
+  bool deleteEntry (int aItemId);
 
 signals:
 
 public slots:
+
+private:
+  bool reorganizeIds ();
 
 };
 
