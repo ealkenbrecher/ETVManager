@@ -57,12 +57,6 @@ void AgendaTab::initAgendaTable ()
   if (0 == mQueryModelAgendaView)
   {
     mQueryModelAgendaView = new QSqlQueryModelAgendaView ();
-    mQueryModelAgendaView->setDbConnectionName(mUser);
-    mQueryModelAgendaView->setPropertyId(Global::getInstance()->getCurrentPropertyId());
-    mQueryModelAgendaView->setYear(Global::getInstance()->getCurrentYear());
-    mQueryModelAgendaView->setAgendaNum(Global::getInstance()->getCurrentEtvNumber());
-    mQueryModelAgendaView->updateData ();
-
     ui->tableAgenda->setModel(mQueryModelAgendaView);
     ui->tableAgenda->horizontalHeader()->resizeSection(0, 50);
     ui->tableAgenda->show();
