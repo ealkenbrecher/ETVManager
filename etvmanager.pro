@@ -12,7 +12,7 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     generatortab.h \
     agendasettings.h \
     agendaitemsettings.h \
-    qsqlquerymodelrichtext.h \
+    QSqlQueryModelImpl.h \
     agendatablecontextmenu.h \
     ordertab.h \
     patterneditor.h \
@@ -30,7 +30,8 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     decissionlibrarytab.h \
     decissionlibraryeditdialog.h \
     global.h \
-    databaseimpl.h
+    databaseimpl.h \
+    qsqlquerymodelagendaview.h
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     mainview.cpp \
     propertysettings.cpp \
@@ -39,7 +40,7 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     generatortab.cpp \
     agendasettings.cpp \
     agendaitemsettings.cpp \
-    qsqlquerymodelrichtext.cpp \
+    QSqlQueryModelImpl.cpp \
     agendatablecontextmenu.cpp \
     ordertab.cpp \
     patterneditor.cpp \
@@ -57,7 +58,8 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     decissionlibrarytab.cpp \
     decissionlibraryeditdialog.cpp \
     global.cpp \
-    databaseimpl.cpp
+    databaseimpl.cpp \
+    qsqlquerymodelagendaview.cpp \
 
 FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
     mainview.ui \

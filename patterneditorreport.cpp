@@ -31,7 +31,7 @@ void patternEditorReport::updatePatternTable()
   query.prepare("SELECT id, ueberschrift, deckblatt FROM ReportPatterns");
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
 
   mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));
@@ -80,7 +80,6 @@ void patternEditorReport::changePatternItemSettings (int aId)
   int selectedRow = ui->tablePatterns->selectionModel()->selection().indexes().value(0).row();
   PatternEditorReportItemSettings itemSettings (this);
 
-  //Database::getInstance()->getDatabase()->open();
   QSqlQuery query (QSqlDatabase::database(mUser));
   query.prepare("SELECT ueberschrift, deckblatt FROM ReportPatterns WHERE id = :id");
 

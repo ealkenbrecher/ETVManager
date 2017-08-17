@@ -1,7 +1,7 @@
 #include "patterneditor.h"
 #include "ui_patterneditor.h"
 #include <QSqlQuery>
-#include "qsqlquerymodelrichtext.h"
+#include "QSqlQueryModelImpl.h"
 #include "PatternItemSettings.h"
 #include <QMessageBox>
 
@@ -24,7 +24,7 @@ void PatternEditor::updatePatternTable ()
   query.prepare("SELECT id, bezeichnung FROM AgendaPatterns ORDER BY bezeichnung ASC");
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
   mQueryModel->setHeaderData(0, Qt::Horizontal, tr("Bezeichnung"));
 

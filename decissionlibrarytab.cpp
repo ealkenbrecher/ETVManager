@@ -1,6 +1,6 @@
 #include "decissionlibrarytab.h"
 #include "ui_decissionlibrarytab.h"
-#include "qsqlquerymodelrichtext.h"
+#include "QSqlQueryModelImpl.h"
 #include <QMessageBox>
 #include "global.h"
 #include "decissionlibraryeditdialog.h"
@@ -70,7 +70,7 @@ void DecissionLibraryTab::updateAgendaTable ()
   query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
   query.exec();
 
-  mQueryModel = new QSqlQueryModelRichtext ();
+  mQueryModel = new QSqlQueryModelImpl ();
   mQueryModel->setQuery(query);
   mQueryModel->setHeaderData(0, Qt::Horizontal, tr("Nr."));
   mQueryModel->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));

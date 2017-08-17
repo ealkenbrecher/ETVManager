@@ -6,7 +6,7 @@
 #include "global.h"
 
 class QSqlDatabase;
-class QSqlQueryModelRichtext;
+class QSqlQueryModelImpl;
 
 namespace Ui {
 class OrderTab;
@@ -37,8 +37,8 @@ private:
     void updateReportTemplateTable ();
     void changeAgendaItemSettings (int aId);
     Ui::OrderTab *ui;
-    QSqlQueryModelRichtext* mQueryModel;
-    QSqlQueryModelRichtext* mQueryModelReportTemplate;
+    QSqlQueryModelImpl* mQueryModel;
+    QSqlQueryModelImpl* mQueryModelReportTemplate;
 
     QString mUser;
 };

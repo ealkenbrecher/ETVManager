@@ -31,3 +31,5 @@
 *.out
 *.app
 etvmanager.pro.user
+*.pro.user.*
+*.pro.user
