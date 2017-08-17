@@ -1,5 +1,7 @@
 #include "QSqlQueryModelImpl.h"
 #include <QTextDocument>
+#include <QSqlError>
+#include <QMessageBox>
 
 #define INVALID -1
 
@@ -34,6 +36,32 @@ void QSqlQueryModelImpl::setYear (int year)
 void QSqlQueryModelImpl::setAgendaNum (int agendaNum)
 {
   mAgendaNum = agendaNum;
+}
+
+bool QSqlQueryModelImpl::runSqlQuery (QSqlQuery &query)
+{
+  bool retVal = false;
+
+  retVal = query.exec();
+
+  //handle sql error
+  if (false == retVal)
+  {
+    QSqlError error;
+    error = query.lastError();
+
+    QString errMsg ("");
+    errMsg.append("Fehlerausgabe Datenbank:\n");
+    errMsg.append(error.databaseText());
+    errMsg.append("\nFehlerausgabe Datenbanktreiber:\n");
+    errMsg.append(error.driverText());
+
+    QMessageBox msgBox;
+    msgBox.setText("Schwerwiegender Fehler beim Ausführen eines Datenbankbefehls");
+    msgBox.setInformativeText(errMsg);
+    int ret = msgBox.exec();
+  }
+  return retVal;
 }
 
 /*void QSqlQueryModelImpl::moveRowUp (int aSourceRow)

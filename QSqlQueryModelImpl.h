@@ -1,6 +1,7 @@
 #ifndef QSqlQueryModelImpl_H
 #define QSqlQueryModelImpl_H
 
+#include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QString>
 
@@ -14,6 +15,7 @@ class QSqlQueryModelImpl : public QSqlQueryModel
     void setPropertyId (int propId);
     void setYear (int year);
     void setAgendaNum (int agendaNum);
+    bool runSqlQuery (QSqlQuery &query);
     //void moveRowUp (int aSourceRow);
     //void moveRowDown (int aSourceRow);
 

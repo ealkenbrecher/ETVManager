@@ -16,7 +16,7 @@ bool QSqlQueryModelAgendaView::updateData ()
   query.bindValue(":year", this->getYear());
   query.bindValue(":etvnr", this->getAgendaNum());
 
-  bool result = query.exec();
+  bool result = runSqlQuery(query);
   this->setQuery(query);
   this->setHeaderData(0, Qt::Horizontal, tr("TOP"));
   this->setHeaderData(1, Qt::Horizontal, tr("Bezeichnung"));
@@ -33,7 +33,7 @@ bool QSqlQueryModelAgendaView::removeRow (int aItemId)
   query.bindValue(":etvnr", this->getAgendaNum());
   query.bindValue(":topid", aItemId);
 
-  bool retVal = query.exec();
+  bool retVal = runSqlQuery(query);
   updateData();
 
   if (true == retVal)
@@ -62,6 +62,6 @@ bool QSqlQueryModelAgendaView::reorganizeIds ()
     query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
     query.bindValue(":oldid", record.value(0).toInt());
     query.bindValue(":newid", topId);
-    query.exec();
+    runSqlQuery(query);
   }
 }
