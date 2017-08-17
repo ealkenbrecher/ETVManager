@@ -64,15 +64,15 @@ bool QSqlQueryModelImpl::runSqlQuery (QSqlQuery &query)
   return retVal;
 }
 
-/*void QSqlQueryModelImpl::moveRowUp (int aSourceRow)
+bool QSqlQueryModelImpl::moveRowUp (int aSourceRow)
 {
 
 }
 
-void QSqlQueryModelImpl::moveRowDown (int aSourceRow)
+bool QSqlQueryModelImpl::moveRowDown (int aSourceRow)
 {
 
-}*/
+}
 
 QVariant QSqlQueryModelImpl::data(const QModelIndex &index, int role) const
 {

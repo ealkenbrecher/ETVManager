@@ -16,8 +16,8 @@ class QSqlQueryModelImpl : public QSqlQueryModel
     void setYear (int year);
     void setAgendaNum (int agendaNum);
     bool runSqlQuery (QSqlQuery &query);
-    //void moveRowUp (int aSourceRow);
-    //void moveRowDown (int aSourceRow);
+    virtual bool moveRowUp (int aSourceRow);
+    virtual bool moveRowDown (int aSourceRow);
 
     QString getDbConnectionName () {return mDbConnectionName;};
     int getPropertyId () {return mPropertyId;};

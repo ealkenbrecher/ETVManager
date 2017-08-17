@@ -42,6 +42,73 @@ bool QSqlQueryModelAgendaView::removeRow (int aItemId)
   return retVal;
 }
 
+bool QSqlQueryModelAgendaView::moveRowUp (int aItemId)
+{
+  QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
+
+  //set the id of the top before to -999
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = -999 WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", (aItemId - 1));
+  bool retVal = runSqlQuery(query);
+
+  //set the chosen top to the correct id
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid_new WHERE obj_id = :id AND wi_jahr = :year AND top_id =:topid AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", aItemId);
+  query.bindValue(":topid_new", aItemId-1);
+  retVal = runSqlQuery(query);
+
+  //set the '-999' topid to the correct topid
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid WHERE obj_id = :id AND wi_jahr = :year AND top_id = -999 AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", aItemId);
+
+  retVal = runSqlQuery(query);
+
+  updateData();
+}
+
+bool QSqlQueryModelAgendaView::moveRowDown (int aItemId)
+{
+  QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
+
+  //set the id of the top before to -999
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = -999 WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", (aItemId + 1));
+  bool retVal = runSqlQuery(query);
+
+  //set the chosen top to the correct id
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid_new WHERE obj_id = :id AND wi_jahr = :year AND top_id =:topid AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", aItemId);
+  query.bindValue(":topid_new", aItemId + 1);
+  retVal = runSqlQuery(query);
+
+  //set the '-999' topid to the correct topid
+  query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid WHERE obj_id = :id AND wi_jahr = :year AND top_id = -999 AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":topid", aItemId);
+  retVal = runSqlQuery(query);
+
+  updateData();
+
+  return retVal;
+}
+
 bool QSqlQueryModelAgendaView::reorganizeIds ()
 {
   int count = this->rowCount();

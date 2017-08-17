@@ -10,6 +10,8 @@ public:
   explicit QSqlQueryModelAgendaView(QObject *parent = 0);
   bool updateData ();
   bool removeRow (int aItemId);
+  bool moveRowUp (int aItemId);
+  bool moveRowDown (int aItemId);
 
 public slots:
 

@@ -181,48 +181,10 @@ void AgendaTab::on_moveAgendaItemUp_clicked()
   }
   else
   {
-    ;//mQueryModelAgendaView->moveRow()
-  }
-
-  /*int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
-  int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
-
-  if (1 == top_id)
-  {
-    QMessageBox::information(this, "Fehler", "Tagesordnungspunkt kann nicht nach oben verschoben werden.");
-  }
-  else
-  {
-    QSqlQuery query (QSqlDatabase::database(mUser));
-
-    //set the id of the top before to -999
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = -999 WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", (top_id - 1));
-    query.exec();
-
-    //set the chosen top to the correct id
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid_new WHERE obj_id = :id AND wi_jahr = :year AND top_id =:topid AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", top_id);
-    query.bindValue(":topid_new", top_id-1);
-    query.exec();
-
-    //set the '-999' topid to the correct topid
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid WHERE obj_id = :id AND wi_jahr = :year AND top_id = -999 AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", top_id);
-    query.exec();
-
-    updateAgendaTable();
+    mQueryModelAgendaView->moveRowUp(top_id);
     ui->tableAgenda->setFocus();
-    ui->tableAgenda->selectRow(top_id - 2);*/
+    ui->tableAgenda->selectRow(top_id - 2);
+  }
 }
 
 void AgendaTab::on_moveAgendaItemDown_clicked()
@@ -237,34 +199,7 @@ void AgendaTab::on_moveAgendaItemDown_clicked()
   }
   else
   {
-    QSqlQuery query (QSqlDatabase::database(mUser));
-
-    //set the id of the top before to -999
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = -999 WHERE obj_id = :id AND wi_jahr = :year AND top_id = :topid AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", (top_id + 1));
-    query.exec();
-
-    //set the chosen top to the correct id
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid_new WHERE obj_id = :id AND wi_jahr = :year AND top_id =:topid AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", top_id);
-    query.bindValue(":topid_new", top_id + 1);
-    query.exec();
-
-    //set the '-999' topid to the correct topid
-    query.prepare("UPDATE Tagesordnungspunkte SET top_id = :topid WHERE obj_id = :id AND wi_jahr = :year AND top_id = -999 AND etv_nr = :etvnum");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnum", Global::getInstance()->getCurrentEtvNumber());
-    query.bindValue(":topid", top_id);
-    query.exec();
-
-    updateAgendaTable();
+    mQueryModelAgendaView->moveRowDown(top_id);
     ui->tableAgenda->setFocus();
     ui->tableAgenda->selectRow(top_id);
   }
