@@ -8,18 +8,20 @@
 #include "global.h"
 
 class AgendaTab;
-class PropertyTab;
+class PropertyOverview;
 class OrderTab;
 class GeneratorTab;
 class ReportGeneratorTab;
 class DecissionLibraryTab;
 
 namespace Ui {
-class mainView;
+class propertyMainView;
 }
 
 QT_FORWARD_DECLARE_CLASS(QSqlError)
+
 class ConnectionWidget;
+class QStandardItemModelPropertyOverview;
 
 enum tabSelection
 {
@@ -42,32 +44,28 @@ public:
     ~mainView();
 
 public slots:
-    void slotRefreshOnChangedTab (int aIndex);
-    void refreshView();
     void patternSettings ();
     void reportSettings ();
     void systemSettings ();
+    void openProperty();
     void addProperty ();
-    void etvSelectionValid (bool aValid);
+
+private slots:
+    void on_treeView_doubleClicked(const QModelIndex &index);
 
 private:
-    void enableTabsOnValidData (bool aEnable);
     bool dbIsOk();
     void setCurrentEstateId ();
-    void setObjectList();
     void setConnectionName (QString value);
-    //void setYearsCurrentObject();
-    Ui::mainView *ui;
+    void updateMainView();
+
+    Ui::propertyMainView *ui;
     QSqlDatabase db;
 
     int mCurrentEstateId;
-    AgendaTab* mAgendaTab;
-    PropertyTab* mPropertyTab;
-    OrderTab* mOrderTab;
-    GeneratorTab* mGeneratorTab;
-    ReportGeneratorTab* mReportGeneratorTab;
-    DecissionLibraryTab* mDecissionLibraryTab;
+    PropertyOverview* mPropertyOverview;
     QString mUser;
+    QStandardItemModelPropertyOverview* mItemModelTree;
 };
 
 #endif // MAINVIEW_H

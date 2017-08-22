@@ -31,7 +31,11 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     decissionlibraryeditdialog.h \
     global.h \
     databaseimpl.h \
-    qsqlquerymodelagendaview.h
+    qsqlquerymodelagendaview.h \
+    propertyoverview.h \
+    qsqlquerymodelpropertyview.h \
+    propertylistdialog.h \
+    qstandarditemmodelpropertyoverview.h
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     mainview.cpp \
     propertysettings.cpp \
@@ -60,9 +64,12 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     global.cpp \
     databaseimpl.cpp \
     qsqlquerymodelagendaview.cpp \
+    propertyoverview.cpp \
+    qsqlquerymodelpropertyview.cpp \
+    propertylistdialog.cpp \
+    qstandarditemmodelpropertyoverview.cpp
 
 FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
-    mainview.ui \
     propertysettings.ui \
     agendatab.ui \
     propertytab.ui \
@@ -82,7 +89,9 @@ FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
     votingdialog.ui \
     decissionitemsettings.ui \
     decissionlibrarytab.ui \
-    decissionlibraryeditdialog.ui
+    decissionlibraryeditdialog.ui \
+    simpleListDialog.ui \
+    propertymainview.ui
 
 build_all:!build_pass {
     CONFIG -= build_all

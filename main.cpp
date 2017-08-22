@@ -69,22 +69,24 @@ int main(int argc, char *argv[])
 
     QMetaObject::invokeMethod(&view, "refreshView", Qt::QueuedConnection);
 
-    QMenu *fileMenu = mainWin.menuBar()->addMenu(QObject::tr("&File"));
+    QMenu *fileMenu = mainWin.menuBar()->addMenu(QObject::tr("&Programm"));
     fileMenu->addSeparator();
-    fileMenu->addAction(QObject::tr("&Quit"), &app, SLOT(quit()));
+    fileMenu->addAction(QObject::tr("&Beenden"), &app, SLOT(quit()));
 
-    QMenu *propertyMenu = mainWin.menuBar()->addMenu(QObject::tr("&Liegenschaften verwalten"));
+    QMenu *propertyMenu = mainWin.menuBar()->addMenu(QObject::tr("&Liegenschaften"));
+    propertyMenu->addAction (QObject::tr("Liegenschaft öffnen"), &view, SLOT(openProperty()));
     propertyMenu->addAction (QObject::tr("Liegenschaft hinzufügen"), &view, SLOT(addProperty()));
 
-    QMenu *templateMenu = mainWin.menuBar()->addMenu(QObject::tr("&Vorlagen verwalten"));
-    templateMenu->addAction (QObject::tr("Tagesordnungspunktvorlagen"), &view, SLOT(patternSettings()));
-    templateMenu->addAction (QObject::tr("Protokoll Deckblattvorlagen"), &view, SLOT(reportSettings()));
+    QMenu *templateMenu = mainWin.menuBar()->addMenu(QObject::tr("&Vorlagen"));
+    templateMenu->addAction (QObject::tr("Tagesordnungspunktvorlagen verwalten"), &view, SLOT(patternSettings()));
+    templateMenu->addAction (QObject::tr("Protokollvorlagen verwalten"), &view, SLOT(reportSettings()));
 
-    QMenu *optionsMenu = mainWin.menuBar()->addMenu(QObject::tr("&Optionen"));
+    QMenu *optionsMenu = mainWin.menuBar()->addMenu(QObject::tr("&Administration"));
     optionsMenu->addAction (QObject::tr("Systemeinstellungen"), &view, SLOT(systemSettings ()));
+    optionsMenu->addAction (QObject::tr("Liegenschaften verwalten"), &view, SLOT(systemSettings ()));
 
-    QMenu *helpMenu = mainWin.menuBar()->addMenu(QObject::tr("&Help"));
-    helpMenu->addAction(QObject::tr("About Qt"), qApp, SLOT(aboutQt()));
+    QMenu *helpMenu = mainWin.menuBar()->addMenu(QObject::tr("&Hilfe"));
+    helpMenu->addAction(QObject::tr("Über Qt"), qApp, SLOT(aboutQt()));
 
     mainWin.show();
 
