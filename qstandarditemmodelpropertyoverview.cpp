@@ -5,6 +5,11 @@ QStandardItemModelPropertyOverview::QStandardItemModelPropertyOverview()
 
 }
 
+void QStandardItemModelPropertyOverview::setQuery(const QString &query, const QSqlDatabase &db)
+{
+
+}
+
 void QStandardItemModelPropertyOverview::populate (int propertyId)
 {
   //test
