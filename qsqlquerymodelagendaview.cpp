@@ -124,9 +124,9 @@ bool QSqlQueryModelAgendaView::reorganizeIds ()
     topId++;
     record = this->record(i);
     query.prepare("UPDATE Tagesordnungspunkte SET top_id = :newid WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr AND top_id = :oldid");
-    query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-    query.bindValue(":year", Global::getInstance()->getCurrentYear());
-    query.bindValue(":etvnr", Global::getInstance()->getCurrentEtvNumber());
+    query.bindValue(":id", this->getPropertyId());
+    query.bindValue(":year", this->getYear());
+    query.bindValue(":etvnr", this->getAgendaNum());
     query.bindValue(":oldid", record.value(0).toInt());
     query.bindValue(":newid", topId);
     runSqlQuery(query);

@@ -14,14 +14,18 @@ class propertyListDialog : public QDialog
   Q_OBJECT
 
   public:
+
     explicit propertyListDialog(QWidget *parent = 0);
     void setDbConnectionName (QString &user);
     void updateDialog ();
-    int getSelectedProperty ();
+    int getSelectedPropertyId ();
+    QString getSelectedPropertyName () const;
     ~propertyListDialog();
 
 private slots:
     void on_tableView_clicked(const QModelIndex &index);
+
+    void on_tableView_doubleClicked(const QModelIndex &index);
 
 private:
     void initDialog ();
@@ -29,7 +33,8 @@ private:
     QSqlQueryModelPropertyView *mView;
 
     QString mUser;
-    int mSelectedProperty;
+    int mSelectedPropertyId;
+    QString mSelectedPropertyName;
 };
 
 #endif // PROPERTYLISTDIALOG_H

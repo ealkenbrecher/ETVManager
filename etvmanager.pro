@@ -5,7 +5,6 @@ QT              += sql widgets network
 QT              += printsupport
 
 HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
-    mainview.h \
     propertysettings.h \
     agendatab.h \
     propertytab.h \
@@ -32,12 +31,17 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     global.h \
     databaseimpl.h \
     qsqlquerymodelagendaview.h \
-    propertyoverview.h \
     qsqlquerymodelpropertyview.h \
     propertylistdialog.h \
-    qstandarditemmodelpropertyoverview.h
+    qstandarditemmodelpropertyoverview.h \
+    agendaoptionsdialog.h \
+    agendadialog.h \
+    mainwindow.h \
+    propertyMainView.h \
+    protocolgeneratormaindlg.h \
+    qsqlquerymodelprotocolgeneratorview.h \
+    agendawizard.h
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
-    mainview.cpp \
     propertysettings.cpp \
     agendatab.cpp \
     propertytab.cpp \
@@ -64,12 +68,18 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     global.cpp \
     databaseimpl.cpp \
     qsqlquerymodelagendaview.cpp \
-    propertyoverview.cpp \
     qsqlquerymodelpropertyview.cpp \
     propertylistdialog.cpp \
-    qstandarditemmodelpropertyoverview.cpp
+    qstandarditemmodelpropertyoverview.cpp \
+    agendaoptionsdialog.cpp \
+    agendadialog.cpp \
+    mainwindow.cpp \
+    propertyMainView.cpp \
+    protocolgeneratormaindlg.cpp \
+    qsqlquerymodelprotocolgeneratorview.cpp \
+    agendawizard.cpp
 
-FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
+FORMS           = qsqlconnectiondialog.ui \
     propertysettings.ui \
     agendatab.ui \
     propertytab.ui \
@@ -91,7 +101,11 @@ FORMS           = browserwidget.ui qsqlconnectiondialog.ui \
     decissionlibrarytab.ui \
     decissionlibraryeditdialog.ui \
     simpleListDialog.ui \
-    propertymainview.ui
+    propertymainview.ui \
+    agendaoptionsdialog.ui \
+    agendadialog.ui \
+    mainwindow.ui \
+    protocolgeneratormaindlg.ui
 
 build_all:!build_pass {
     CONFIG -= build_all

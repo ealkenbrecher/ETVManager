@@ -1,6 +1,6 @@
 #include "agendatab.h"
 #include "ui_agendatab.h"
-#include "mainview.h"
+#include "propertyMainView.h"
 #include <QtSql>
 #include <QString>
 #include "agendasettings.h"

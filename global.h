@@ -4,6 +4,10 @@
 #include <QtSql>
 #include "global.h"
 
+#define INVALID -99999
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+
 enum voteType
 {
   eHead = 0,

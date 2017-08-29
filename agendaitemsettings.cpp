@@ -202,9 +202,9 @@ QString AgendaItemSettings::replaceWildcards (QString in)
 
       //get years
       query.prepare("SELECT * FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvNum");
-      query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
-      query.bindValue(":year", Global::getInstance()->getCurrentYear());
-      query.bindValue(":etvNum", Global::getInstance()->getCurrentEtvNumber());
+      query.bindValue(":id", mPropertyId);
+      query.bindValue(":year", mYear);
+      query.bindValue(":etvNum", mAgendaNum);
       query.exec();
 
       QString etvNum;
@@ -222,13 +222,13 @@ QString AgendaItemSettings::replaceWildcards (QString in)
 
       if (in.contains("%VergangenesWirtschaftsjahr%"))
       {
-          int lastYear = Global::getInstance()->getCurrentYear() - 1;
+          int lastYear = mYear - 1;
           in.replace(QString("%VergangenesWirtschaftsjahr%"), QString::number (lastYear));
       }
 
       if (in.contains("%Wirtschaftsjahr%"))
       {
-          int year = Global::getInstance()->getCurrentYear();
+          int year = mYear;
           in.replace(QString("%Wirtschaftsjahr%"), QString::number (year));
       }
 
@@ -240,7 +240,7 @@ QString AgendaItemSettings::replaceWildcards (QString in)
 
       if (in.contains("%NächstesWirtschaftsjahr%"))
       {
-          int year = Global::getInstance()->getCurrentYear() + 1;
+          int year = mYear + 1;
           in.replace(QString("%NächstesWirtschaftsjahr%"), QString::number(year));
       }
 

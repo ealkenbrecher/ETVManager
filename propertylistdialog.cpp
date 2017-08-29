@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QDebug>
 #include "qsqlquerymodelpropertyview.h"
+#include "global.h"
 
 propertyListDialog::propertyListDialog(QWidget *parent) :
   QDialog(parent),
@@ -11,6 +12,8 @@ propertyListDialog::propertyListDialog(QWidget *parent) :
   ui->setupUi(this);
   mView = 0;
   mUser ="";
+  mSelectedPropertyId = INVALID;
+  mSelectedPropertyName = "";
 
   //prevent dialog from blocking application
   this->setWindowModality(Qt::NonModal);
@@ -40,9 +43,14 @@ void propertyListDialog::updateDialog ()
 }
 
 //return sql id of selected property
-int propertyListDialog::getSelectedProperty ()
+int propertyListDialog::getSelectedPropertyId ()
 {
-  return mSelectedProperty;
+  return mSelectedPropertyId;
+}
+
+QString propertyListDialog::getSelectedPropertyName () const
+{
+  return mSelectedPropertyName;
 }
 
 propertyListDialog::~propertyListDialog()
@@ -54,5 +62,11 @@ propertyListDialog::~propertyListDialog()
 //update sql id of selected property
 void propertyListDialog::on_tableView_clicked(const QModelIndex &index)
 {
-  mSelectedProperty = ui->tableView->model()->index(index.row(),1).data().toInt();
+  mSelectedPropertyId = ui->tableView->model()->index(index.row(),1).data().toInt();
+  mSelectedPropertyName = ui->tableView->model()->index(index.row(),0).data().toString();
+}
+
+void propertyListDialog::on_tableView_doubleClicked(const QModelIndex &index)
+{
+  accept();
 }

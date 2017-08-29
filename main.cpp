@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "mainview.h"
+#include "mainwindow.h"
 
 #include <QtCore>
 #include <QtWidgets>
@@ -57,13 +57,17 @@ int main(int argc, char *argv[])
 
     QMainWindow mainWin;
     mainWin.setWindowTitle(QObject::tr("ETV Planer"));
-    mainWin.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mainWin.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mainView view (&mainWin);
-    view.setParameter(eDbConnectionName, database.getConnectionName());
+    //mainView view (&mainWin);
+    //view.setParameter(eDbConnectionName, database.getConnectionName());
+
+    MainWindow view (&mainWin);
+    view.setDbConnectionName (database.getConnectionName());
 
     mainWin.setCentralWidget(&view);
-    mainWin.setFixedSize(view.size());
+    //mainWin.setMinimumSize(view.size());
+    mainWin.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     StringReplacer::getInstance()->setUser(database.getConnectionName());
 
@@ -73,17 +77,11 @@ int main(int argc, char *argv[])
     fileMenu->addSeparator();
     fileMenu->addAction(QObject::tr("&Beenden"), &app, SLOT(quit()));
 
-    QMenu *propertyMenu = mainWin.menuBar()->addMenu(QObject::tr("&Liegenschaften"));
-    propertyMenu->addAction (QObject::tr("Liegenschaft öffnen"), &view, SLOT(openProperty()));
-    propertyMenu->addAction (QObject::tr("Liegenschaft hinzufügen"), &view, SLOT(addProperty()));
-
-    QMenu *templateMenu = mainWin.menuBar()->addMenu(QObject::tr("&Vorlagen"));
-    templateMenu->addAction (QObject::tr("Tagesordnungspunktvorlagen verwalten"), &view, SLOT(patternSettings()));
-    templateMenu->addAction (QObject::tr("Protokollvorlagen verwalten"), &view, SLOT(reportSettings()));
-
     QMenu *optionsMenu = mainWin.menuBar()->addMenu(QObject::tr("&Administration"));
+    optionsMenu->addAction (QObject::tr("Tagesordnungspunktvorlagen verwalten"), &view, SLOT(patternSettings()));
+    optionsMenu->addAction (QObject::tr("Protokollvorlagen verwalten"), &view, SLOT(reportSettings()));
     optionsMenu->addAction (QObject::tr("Systemeinstellungen"), &view, SLOT(systemSettings ()));
-    optionsMenu->addAction (QObject::tr("Liegenschaften verwalten"), &view, SLOT(systemSettings ()));
+    //optionsMenu->addAction (QObject::tr("Liegenschaften verwalten"), &view, SLOT(systemSettings ()));
 
     QMenu *helpMenu = mainWin.menuBar()->addMenu(QObject::tr("&Hilfe"));
     helpMenu->addAction(QObject::tr("Über Qt"), qApp, SLOT(aboutQt()));

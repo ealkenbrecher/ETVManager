@@ -1,12 +1,10 @@
 #include "Global.h"
 
-static int invalid = -999;
-
 Global::Global()
 {
-  mPropertyId = invalid;
-  mYear = invalid;
-  mEtvNumber = invalid;
+  mPropertyId = INVALID;
+  mYear = INVALID;
+  mEtvNumber = INVALID;
 }
 
 Global::~Global()
@@ -21,7 +19,7 @@ Global* Global::getInstance()
 
 int Global::getCurrentPropertyId ()
 {
-  if (mPropertyId == invalid)
+  if (mPropertyId == INVALID)
       qDebug() << "mPropertyId is not valid";
 
   return mPropertyId;
@@ -41,7 +39,7 @@ void Global::setCurrentEtvNumber (int aNumber)
 
 int Global::getCurrentEtvNumber ()
 {
-  if (mEtvNumber == invalid)
+  if (mEtvNumber == INVALID)
       qDebug() << "mEtvNumber is not valid";
 
   return mEtvNumber;
@@ -49,7 +47,7 @@ int Global::getCurrentEtvNumber ()
 
 int Global::getCurrentYear ()
 {
-  if (mYear == invalid)
+  if (mYear == INVALID)
       qDebug() << "mYear is not valid";
 
   return mYear;

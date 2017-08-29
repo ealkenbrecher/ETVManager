@@ -6,11 +6,14 @@
 
 class QStandardItemModelPropertyOverview : public QStandardItemModel
 {
-public:
-  QStandardItemModelPropertyOverview();
-  ~QStandardItemModelPropertyOverview();
-  void setQuery(const QString &query, const QSqlDatabase &db = QSqlDatabase());
-  void populate (int propertyId);
+  public:
+    QStandardItemModelPropertyOverview();
+    ~QStandardItemModelPropertyOverview();
+    void setQuery(const QSqlQuery &query);
+    bool populate (QString &dbConnName, int propertyId);
+    //void setPropertyId (int propertyId);
+  private:
+    bool runSqlQuery (QSqlQuery &query);
 };
 
 #endif // QSTANDARDITEMMODELPROPERTYOVERVIEW_H

@@ -1,6 +1,6 @@
 #include "ordertab.h"
 #include "ui_ordertab.h"
-#include "mainview.h"
+#include "propertyMainView.h"
 #include <QtSql>
 #include <QString>
 #include "agendasettings.h"
