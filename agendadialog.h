@@ -34,6 +34,8 @@ signals:
 private:
   void initAgendaTable ();
   void changeAgendaItemSettings (int aTopId);
+  bool checkForExistingDecissions ();
+  bool deleteExistingDecissions();
 
   Ui::AgendaDialog *ui;
   QSqlQueryModelAgendaView* mQueryModelAgendaView;

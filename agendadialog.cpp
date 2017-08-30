@@ -53,6 +53,21 @@ void AgendaDialog::updateAgendaTable()
 
 void AgendaDialog::changeAgendaItemSettings (int aTopId)
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   AgendaItemSettings itemSettings (this);
   itemSettings.setWindowModality(Qt::WindowModal);
   itemSettings.setdialogMode(AgendaItemDialogMode::update);
@@ -66,7 +81,39 @@ void AgendaDialog::changeAgendaItemSettings (int aTopId)
   itemSettings.show();
 
   if (itemSettings.exec() != QDialog::Rejected)
+  {
     updateAgendaTable();
+  }
+}
+
+bool AgendaDialog::checkForExistingDecissions()
+{
+  QSqlQuery query (QSqlDatabase::database(mDbConnName));
+  query.prepare("SELECT top_id FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr");
+  query.bindValue(":id", mEstateId);
+  query.bindValue(":year", mAgendaYear);
+  query.bindValue(":etvnr", mAgendaNum);
+
+  bool result = query.exec();
+
+  if (query.next())
+  {
+    return true;
+  }
+  else
+    return false;
+}
+
+bool AgendaDialog::deleteExistingDecissions()
+{
+  QSqlQuery query (QSqlDatabase::database(mDbConnName));
+
+  query.prepare("DELETE FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr");
+  query.bindValue(":id", mEstateId);
+  query.bindValue(":year", mAgendaYear);
+  query.bindValue(":etvnr", mAgendaNum);
+
+  return query.exec();
 }
 
 void AgendaDialog::on_tableAgenda_doubleClicked(const QModelIndex &index)
@@ -80,6 +127,21 @@ void AgendaDialog::on_tableAgenda_doubleClicked(const QModelIndex &index)
 
 void AgendaDialog::on_addEntry_clicked()
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   AgendaItemSettings itemSettings (this);
   itemSettings.setdialogMode(AgendaItemDialogMode::insert);
   itemSettings.setDbConnectionName(mDbConnName);
@@ -95,11 +157,28 @@ void AgendaDialog::on_addEntry_clicked()
   itemSettings.show();
 
   if (itemSettings.exec() != QDialog::Rejected)
+  {
     updateAgendaTable();
+  }
 }
 
 void AgendaDialog::on_editEntry_clicked()
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   //check if selection in tableview is valid
   if (ui->tableAgenda->selectionModel()->selectedRows().count() == 1)
   {
@@ -114,6 +193,21 @@ void AgendaDialog::on_editEntry_clicked()
 
 void AgendaDialog::on_deleteEntry_clicked()
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   if (ui->tableAgenda->selectionModel()->selectedRows().count() == 1)
   {
     QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Tagesordnungspunkt wirklich löschen?", QMessageBox::Yes|QMessageBox::No);
@@ -143,6 +237,21 @@ void AgendaDialog::on_deleteEntry_clicked()
 
 void AgendaDialog::on_moveAgendaItemUp_clicked()
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
   int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
 
@@ -160,6 +269,21 @@ void AgendaDialog::on_moveAgendaItemUp_clicked()
 
 void AgendaDialog::on_moveAgendaItemDown_clicked()
 {
+  if (checkForExistingDecissions())
+  {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Achtung", "Es wurde bereits eine Protokollabschrift generiert.\n"
+                                                              "Generierte Beschlüsse werden gelöscht, Neuerstellung erforderlich.\n"
+                                                              "Fortfahren?", QMessageBox::Yes|QMessageBox::No);
+    if (reply != QMessageBox::Yes)
+    {
+      return;
+    }
+    else
+    {
+      deleteExistingDecissions ();
+    }
+  }
+
   int selectedRow = ui->tableAgenda->selectionModel()->selection().indexes().value(0).row();
   int top_id = ui->tableAgenda->model()->index(selectedRow,0).data().toInt();
 
