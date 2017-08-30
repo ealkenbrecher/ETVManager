@@ -95,7 +95,7 @@ void ReportGeneratorTab::updateAgendaTable ()
 
 void ReportGeneratorTab::updateReportTemplateTable ()
 {
-  QSqlQuery query (QSqlDatabase::database(mUser));
+  /*QSqlQuery query (QSqlDatabase::database(mUser));
   query.prepare("SELECT Protokollueberschrift FROM Eigentuemerversammlungen WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr");
   query.bindValue(":id", Global::getInstance()->getCurrentPropertyId());
   query.bindValue(":year", Global::getInstance()->getCurrentYear());
@@ -106,7 +106,7 @@ void ReportGeneratorTab::updateReportTemplateTable ()
   mQueryModelReportTemplate->setQuery(query);
 
   ui->tableReportTemplate->setModel(mQueryModelReportTemplate);
-  ui->tableReportTemplate->show();
+  ui->tableReportTemplate->show();*/
 }
 
 void ReportGeneratorTab::on_tableAgenda_doubleClicked(const QModelIndex &index)

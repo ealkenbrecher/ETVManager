@@ -8,7 +8,7 @@ class QSqlQueryModelProtocolGeneratorView : public QSqlQueryModelImpl
 public:
   explicit QSqlQueryModelProtocolGeneratorView (QObject *parent = 0);
   bool updateData ();
-
+  bool moveRowUp(int aSourceRow);
 };
 
 #endif // QSQLQUERYMODELPROTOCOLGENERATORVIEW_H

@@ -23,6 +23,8 @@ private slots:
   void on_startAgendaWizard_clicked();
   void on_startCoverpageWizard_clicked();
 
+  void on_moveEntryUp_clicked();
+
 private:
   void initTableView();
   void updateTableView ();
