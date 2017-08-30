@@ -10,6 +10,7 @@ public:
   bool updateData ();
   bool moveRowUp(int aSourceRow);
   bool moveRowDown(int aSourceRow);
+  bool deleteEntries ();
 };
 
 #endif // QSQLQUERYMODELPROTOCOLGENERATORVIEW_H

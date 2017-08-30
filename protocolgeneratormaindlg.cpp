@@ -137,3 +137,26 @@ void ProtocolGeneratorMainDlg::on_buttonBox_accepted()
 {
   emit exitView();
 }
+
+void ProtocolGeneratorMainDlg::on_deleteAllEntries_clicked()
+{
+  int ret = QMessageBox::warning(this, tr("ETVManager"),
+                                 tr("Achtung. Bestätigung des Dialogs\n"
+                                    "entfernt alle generierten Beschlüsse.\n"
+                                    "Fortfahren?"),
+                                 QMessageBox::Ok | QMessageBox::Cancel);
+
+  switch (ret)
+  {
+    case QMessageBox::Ok:
+      mView->deleteEntries ();
+      // Save was clicked
+      break;
+    case QMessageBox::Cancel:
+      // Cancel was clicked
+      break;
+    default:
+      // should never be reached
+      break;
+  }
+}

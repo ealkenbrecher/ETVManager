@@ -22,7 +22,7 @@
      <x>10</x>
      <y>10</y>
      <width>781</width>
-     <height>521</height>
+     <height>525</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -143,6 +143,13 @@
        <widget class="QPushButton" name="addChangePresence">
         <property name="text">
          <string>Änderung Anwesenheit zur Versammlung</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deleteAllEntries">
+        <property name="text">
+         <string>Alle generierten Beschlüsse löschen</string>
         </property>
        </widget>
       </item>

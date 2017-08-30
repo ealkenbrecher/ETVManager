@@ -92,3 +92,19 @@ bool QSqlQueryModelProtocolGeneratorView::moveRowDown(int aSourceRow)
 
   return retVal;
 }
+
+bool QSqlQueryModelProtocolGeneratorView::deleteEntries ()
+{
+  QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
+
+  //set the id of the top before to -999
+  query.prepare("DELETE FROM Beschluesse WHERE obj_id = :id AND wi_jahr = :year AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  bool retVal = runSqlQuery(query);
+
+  updateData();
+
+  return retVal;
+}

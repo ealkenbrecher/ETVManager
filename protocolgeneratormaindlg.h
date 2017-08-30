@@ -36,6 +36,8 @@ private slots:
 
   void on_buttonBox_accepted();
 
+  void on_deleteAllEntries_clicked();
+
 private:
   void initTableView();
   void updateTableView ();
