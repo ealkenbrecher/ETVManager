@@ -10,6 +10,7 @@ propertyListDialog::propertyListDialog(QWidget *parent) :
   ui(new Ui::simpleListDialog)
 {
   ui->setupUi(this);
+
   mView = 0;
   mUser ="";
   mSelectedPropertyId = INVALID;
@@ -30,7 +31,9 @@ void propertyListDialog::initDialog ()
   mView = new QSqlQueryModelPropertyView ();
 
   if (0 != mView)
+  {
     ui->tableView->setModel(mView);
+  }
 }
 
 void propertyListDialog::updateDialog ()

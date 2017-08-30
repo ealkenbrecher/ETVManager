@@ -12,7 +12,7 @@ QSqlQueryModelPropertyView::QSqlQueryModelPropertyView(QObject *parent) :
 bool QSqlQueryModelPropertyView::updateData ()
 {
   QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
-  query.prepare("SELECT obj_name, obj_id FROM Objekt");
+  query.prepare("SELECT obj_name, obj_id FROM Objekt ORDER BY obj_name ASC");
 
   bool result = runSqlQuery(query);
   this->setQuery(query);
