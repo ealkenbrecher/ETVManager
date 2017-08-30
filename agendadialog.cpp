@@ -178,5 +178,5 @@ void AgendaDialog::on_moveAgendaItemDown_clicked()
 
 void AgendaDialog::on_buttonBox_accepted()
 {
-  emit exitView();
+  emit exitWidget();
 }

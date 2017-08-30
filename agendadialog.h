@@ -29,7 +29,7 @@ private slots:
   void on_buttonBox_accepted();
 
 signals:
-  void exitView();
+  void exitWidget();
 
 private:
   void initAgendaTable ();
