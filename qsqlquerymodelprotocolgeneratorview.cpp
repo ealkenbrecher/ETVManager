@@ -19,9 +19,9 @@ bool QSqlQueryModelProtocolGeneratorView::updateData ()
   bool result = runSqlQuery(query);
 
   this->setQuery(query);
-  this->setHeaderData(0, Qt::Horizontal, tr("TOP"));
-  this->setHeaderData(1, Qt::Horizontal, tr("Beschreibung"));
-  this->setHeaderData(2, Qt::Horizontal, tr("Protokoll ID"));
+  this->setHeaderData(0, Qt::Horizontal, tr("Tagesordnungspunkt Nummer"));
+  this->setHeaderData(1, Qt::Horizontal, tr("Beschlussüberschrift"));
+  this->setHeaderData(2, Qt::Horizontal, tr("Protokollreihenfolge"));
 
   return result;
 }
@@ -57,4 +57,38 @@ bool QSqlQueryModelProtocolGeneratorView::moveRowUp(int aSourceRow)
   retVal = runSqlQuery(query);
 
   updateData();
+}
+
+bool QSqlQueryModelProtocolGeneratorView::moveRowDown(int aSourceRow)
+{
+  QSqlQuery query (QSqlDatabase::database(this->getDbConnectionName()));
+
+  //set the id of the top before to -999
+  query.prepare("UPDATE Beschluesse SET protokoll_id = -999 WHERE obj_id = :id AND wi_jahr = :year AND protokoll_id = :protokoll_id AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":protokoll_id", (aSourceRow + 1));
+  bool retVal = runSqlQuery(query);
+
+  //set the chosen top to the correct id
+  query.prepare("UPDATE Beschluesse SET protokoll_id = :protokoll_id_new WHERE obj_id = :id AND wi_jahr = :year AND protokoll_id =:protokoll_id AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":protokoll_id", aSourceRow);
+  query.bindValue(":protokoll_id_new", aSourceRow + 1);
+  retVal = runSqlQuery(query);
+
+  //set the '-999' topid to the correct topid
+  query.prepare("UPDATE Beschluesse SET protokoll_id = :protokoll_id WHERE obj_id = :id AND wi_jahr = :year AND protokoll_id = -999 AND etv_nr = :etvnr");
+  query.bindValue(":id", this->getPropertyId());
+  query.bindValue(":year", this->getYear());
+  query.bindValue(":etvnr", this->getAgendaNum());
+  query.bindValue(":protokoll_id", aSourceRow);
+  retVal = runSqlQuery(query);
+
+  updateData();
+
+  return retVal;
 }

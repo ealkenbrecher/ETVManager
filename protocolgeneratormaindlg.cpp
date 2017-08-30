@@ -85,6 +85,7 @@ void ProtocolGeneratorMainDlg::on_moveEntryUp_clicked()
     lMsgBox.setText("Der Beschluss kann nicht weiter nach oben verschoben werden.");
     lMsgBox.setWindowTitle("Fehler");
     lMsgBox.exec();
+    ui->tableView->setFocus();
     ui->tableView->selectRow(selectedRow);
   }
   else
@@ -92,5 +93,28 @@ void ProtocolGeneratorMainDlg::on_moveEntryUp_clicked()
     mView->moveRowUp(protocolId);
     ui->tableView->setFocus();
     ui->tableView->selectRow(selectedRow - 1);
+  }
+}
+
+void ProtocolGeneratorMainDlg::on_moveEntryDown_clicked()
+{
+  int selectedRow = ui->tableView->selectionModel()->selection().indexes().value(0).row();
+  int protocolId = ui->tableView->model()->index(selectedRow,2).data().toInt();
+
+  int rows = ui->tableView->model()->rowCount();
+  if (rows == selectedRow + 1 || rows == protocolId)
+  {
+    QMessageBox lMsgBox (this);
+    lMsgBox.setText("Der Beschluss kann nicht weiter nach unten verschoben werden.");
+    lMsgBox.setWindowTitle("Fehler");
+    lMsgBox.exec();
+    ui->tableView->setFocus();
+    ui->tableView->selectRow(selectedRow);
+  }
+  else
+  {
+    mView->moveRowDown(protocolId);
+    ui->tableView->setFocus();
+    ui->tableView->selectRow(selectedRow + 1);
   }
 }

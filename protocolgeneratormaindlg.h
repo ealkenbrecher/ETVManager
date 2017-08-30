@@ -25,6 +25,8 @@ private slots:
 
   void on_moveEntryUp_clicked();
 
+  void on_moveEntryDown_clicked();
+
 private:
   void initTableView();
   void updateTableView ();
