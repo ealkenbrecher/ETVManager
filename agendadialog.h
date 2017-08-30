@@ -1,7 +1,7 @@
 #ifndef AGENDADIALOG_H
 #define AGENDADIALOG_H
 
-#include <QDialog>
+#include <QWidget>
 
 class QSqlQueryModelAgendaView;
 
@@ -9,7 +9,7 @@ namespace Ui {
   class AgendaDialog;
 }
 
-class AgendaDialog : public QDialog
+class AgendaDialog : public QWidget
 {
   Q_OBJECT
 
@@ -25,6 +25,11 @@ private slots:
   void on_addEntry_clicked();
   void on_deleteEntry_clicked();
   void on_tableAgenda_doubleClicked(const QModelIndex &index);
+
+  void on_buttonBox_accepted();
+
+signals:
+  void exitView();
 
 private:
   void initAgendaTable ();

@@ -33,6 +33,7 @@ propertyMainView::propertyMainView(QWidget *parent, QString &rDbConnectionName, 
 
   mItemModelTree = 0;
   mProtocolGeneratorMainDlg = 0;
+  mAgendaWidget = 0;
 
   openProperty();
 }
@@ -61,6 +62,9 @@ propertyMainView::~propertyMainView()
 
   if (0 != mItemModelTree)
     delete mItemModelTree;
+
+  if (0 != mAgendaWidget)
+    delete mAgendaWidget;
 }
 
 void propertyMainView::openProperty()
@@ -119,8 +123,12 @@ void propertyMainView::showAgendaView ()
   int selectedYear = ui->treeView->selectionModel()->selectedRows(0).value(0).data().toInt();
   int selectedAgendaNum = ui->treeView->selectionModel()->selectedRows(1).value(0).data().toInt();
 
-  AgendaDialog dlg (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
-  dlg.exec();
+  mAgendaWidget = new AgendaDialog (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
+  if (0 != mAgendaWidget)
+  {
+    connect (mAgendaWidget, SIGNAL (exitWidget()), this, SLOT (killAgendaWidget()));
+    mAgendaWidget->show();
+  }
 }
 
 void propertyMainView::showProtocolTranscriptEditor ()
@@ -147,6 +155,15 @@ void propertyMainView::killProtocolGeneratorView ()
   {
     delete mProtocolGeneratorMainDlg;
     mProtocolGeneratorMainDlg = 0;
+  }
+}
+
+void propertyMainView::killAgendaWidget()
+{
+  if (0 != mAgendaWidget)
+  {
+    delete mAgendaWidget;
+    mAgendaWidget = 0;
   }
 }
 

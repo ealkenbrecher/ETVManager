@@ -7,22 +7,17 @@
 #include <QString>
 #include "global.h"
 
-class AgendaTab;
-class PropertyOverview;
-class OrderTab;
-class GeneratorTab;
-class ReportGeneratorTab;
-class DecissionLibraryTab;
-
 namespace Ui {
 class propertyMainView;
 }
 
 QT_FORWARD_DECLARE_CLASS(QSqlError)
 
+class PropertyOverview;
 class ConnectionWidget;
 class QStandardItemModelPropertyOverview;
 class ProtocolGeneratorMainDlg;
+class AgendaDialog;
 
 enum tabSelection
 {
@@ -51,6 +46,7 @@ private slots:
     void on_exitButton_clicked();
     void on_editButton_clicked();
     void killProtocolGeneratorView ();
+    void killAgendaWidget();
 
 private:
     void openProperty();
@@ -73,6 +69,7 @@ private:
     ProtocolGeneratorMainDlg* mProtocolGeneratorMainDlg;
     QString mDbConnectionName;
     QStandardItemModelPropertyOverview* mItemModelTree;
+    AgendaDialog* mAgendaWidget;
 };
 
 #endif // MAINVIEW_H

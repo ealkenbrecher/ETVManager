@@ -1,11 +1,11 @@
-#include "agendadialog.h"
+﻿#include "agendadialog.h"
 #include "ui_agendadialog.h"
 #include "QSqlQueryModelAgendaView.h"
 #include "AgendaItemSettings.h"
 #include <QMessageBox>
 
 AgendaDialog::AgendaDialog(QWidget *parent, QString &rDbConnName, int estateId, int agendaYear, int agendaNum) :
-  QDialog(parent),
+  QWidget(parent),
   ui(new Ui::AgendaDialog)
 {
   ui->setupUi(this);
@@ -54,6 +54,7 @@ void AgendaDialog::updateAgendaTable()
 void AgendaDialog::changeAgendaItemSettings (int aTopId)
 {
   AgendaItemSettings itemSettings (this);
+  itemSettings.setWindowModality(Qt::WindowModal);
   itemSettings.setdialogMode(AgendaItemDialogMode::update);
   itemSettings.setDbConnectionName(mDbConnName);
   itemSettings.setPropertyId(mEstateId);
@@ -173,4 +174,9 @@ void AgendaDialog::on_moveAgendaItemDown_clicked()
     ui->tableAgenda->setFocus();
     ui->tableAgenda->selectRow(top_id);
   }
+}
+
+void AgendaDialog::on_buttonBox_accepted()
+{
+  emit exitView();
 }

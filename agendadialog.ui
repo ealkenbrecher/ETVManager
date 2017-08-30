@@ -1,25 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AgendaDialog</class>
- <widget class="QDialog" name="AgendaDialog">
+ <widget class="QWidget" name="AgendaDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>967</width>
-    <height>547</height>
+    <width>800</width>
+    <height>542</height>
    </rect>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>799</width>
+    <height>542</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>941</width>
-     <height>521</height>
+     <width>741</width>
+     <height>451</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -173,6 +182,9 @@
     </item>
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>

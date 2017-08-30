@@ -23,7 +23,7 @@ public:
     virtual ~AgendaTab();
 
 signals:
-    void selectTab (int);
+    void exitView ();
 
 private slots:
     void on_tableAgenda_doubleClicked(const QModelIndex &index);
