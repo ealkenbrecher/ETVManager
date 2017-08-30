@@ -1,25 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>protocolGeneratorMainDlg</class>
- <widget class="QDialog" name="protocolGeneratorMainDlg">
+ <widget class="QWidget" name="protocolGeneratorMainDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>993</width>
-    <height>663</height>
+    <width>800</width>
+    <height>542</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="gridLayoutWidget_2">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>975</width>
-     <height>641</height>
+     <width>781</width>
+     <height>521</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -84,7 +87,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>450</height>
+        <height>350</height>
        </size>
       </property>
       <property name="font">

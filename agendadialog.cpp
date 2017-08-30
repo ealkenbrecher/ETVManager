@@ -9,6 +9,7 @@ AgendaDialog::AgendaDialog(QWidget *parent, QString &rDbConnName, int estateId, 
   ui(new Ui::AgendaDialog)
 {
   ui->setupUi(this);
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Zurück zur Übersicht");
   mQueryModelAgendaView = 0;
   mDbConnName = rDbConnName;
   mEstateId = estateId;

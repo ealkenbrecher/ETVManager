@@ -32,6 +32,7 @@ propertyMainView::propertyMainView(QWidget *parent, QString &rDbConnectionName, 
   setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
   mItemModelTree = 0;
+  mProtocolGeneratorMainDlg = 0;
 
   openProperty();
 }
@@ -54,6 +55,12 @@ void propertyMainView::setCurrentEstateId (const int value)
 propertyMainView::~propertyMainView()
 {
   delete ui;
+
+  if (0 != mProtocolGeneratorMainDlg)
+    delete mProtocolGeneratorMainDlg;
+
+  if (0 != mItemModelTree)
+    delete mItemModelTree;
 }
 
 void propertyMainView::openProperty()
@@ -126,8 +133,21 @@ void propertyMainView::showProtocolGenerator ()
   int selectedYear = ui->treeView->selectionModel()->selectedRows(0).value(0).data().toInt();
   int selectedAgendaNum = ui->treeView->selectionModel()->selectedRows(1).value(0).data().toInt();
 
-  ProtocolGeneratorMainDlg dlg (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
-  dlg.exec();
+  mProtocolGeneratorMainDlg = new ProtocolGeneratorMainDlg (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
+  if (0 != mProtocolGeneratorMainDlg)
+  {
+    connect (mProtocolGeneratorMainDlg, SIGNAL (exitView()), this, SLOT (killProtocolGeneratorView ()));
+    mProtocolGeneratorMainDlg->show ();
+  }
+}
+
+void propertyMainView::killProtocolGeneratorView ()
+{
+  if (0 != mProtocolGeneratorMainDlg)
+  {
+    delete mProtocolGeneratorMainDlg;
+    mProtocolGeneratorMainDlg = 0;
+  }
 }
 
 void propertyMainView::showDocumentGenerator()

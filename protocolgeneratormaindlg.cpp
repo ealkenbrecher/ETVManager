@@ -1,15 +1,19 @@
-#include "protocolgeneratormaindlg.h"
+﻿#include "protocolgeneratormaindlg.h"
 #include "ui_protocolgeneratormaindlg.h"
 #include "QSqlQueryModelProtocolGeneratorView.h"
 #include "agendawizard.h"
 #include <QMessageBox>
+#include "global.h"
 
 ProtocolGeneratorMainDlg::ProtocolGeneratorMainDlg(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum) :
-  QDialog(parent),
+  QWidget(parent),
   ui(new Ui::protocolGeneratorMainDlg)
 {
   ui->setupUi(this);
   ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Zurück zur Übersicht");
+
+  setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
   mView = 0;
   mAgendaWizard = 0;
 
@@ -117,4 +121,19 @@ void ProtocolGeneratorMainDlg::on_moveEntryDown_clicked()
     ui->tableView->setFocus();
     ui->tableView->selectRow(selectedRow + 1);
   }
+}
+
+void ProtocolGeneratorMainDlg::on_addChangeRules_clicked()
+{
+
+}
+
+void ProtocolGeneratorMainDlg::on_addChangePresence_clicked()
+{
+
+}
+
+void ProtocolGeneratorMainDlg::on_buttonBox_accepted()
+{
+  emit exitView();
 }

@@ -22,6 +22,7 @@ QT_FORWARD_DECLARE_CLASS(QSqlError)
 
 class ConnectionWidget;
 class QStandardItemModelPropertyOverview;
+class ProtocolGeneratorMainDlg;
 
 enum tabSelection
 {
@@ -48,8 +49,8 @@ signals:
 private slots:
     void on_treeView_doubleClicked(const QModelIndex &index);
     void on_exitButton_clicked();
-
     void on_editButton_clicked();
+    void killProtocolGeneratorView ();
 
 private:
     void openProperty();
@@ -69,6 +70,7 @@ private:
 
     int mCurrentEstateId;
     PropertyOverview* mPropertyOverview;
+    ProtocolGeneratorMainDlg* mProtocolGeneratorMainDlg;
     QString mDbConnectionName;
     QStandardItemModelPropertyOverview* mItemModelTree;
 };

@@ -11,13 +11,16 @@ namespace Ui {
   class protocolGeneratorMainDlg;
 }
 
-class ProtocolGeneratorMainDlg : public QDialog
+class ProtocolGeneratorMainDlg : public QWidget
 {
   Q_OBJECT
 
 public:
   explicit ProtocolGeneratorMainDlg(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum);
   ~ProtocolGeneratorMainDlg();
+
+signals:
+  void exitView ();
 
 private slots:
   void on_startAgendaWizard_clicked();
@@ -26,6 +29,12 @@ private slots:
   void on_moveEntryUp_clicked();
 
   void on_moveEntryDown_clicked();
+
+  void on_addChangeRules_clicked();
+
+  void on_addChangePresence_clicked();
+
+  void on_buttonBox_accepted();
 
 private:
   void initTableView();
