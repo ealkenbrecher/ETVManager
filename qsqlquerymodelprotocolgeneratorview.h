@@ -10,6 +10,7 @@ public:
   bool updateData ();
   bool moveRowUp(int aSourceRow);
   bool moveRowDown(int aSourceRow);
+  bool deleteEntry (int aRow);
   bool deleteEntries ();
 };
 
