@@ -63,6 +63,9 @@
     </item>
     <item row="0" column="2">
      <widget class="QPushButton" name="deleteProperty">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="baseSize">
        <size>
         <width>0</width>

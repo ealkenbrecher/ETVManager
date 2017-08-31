@@ -94,10 +94,6 @@ void PropertySettings::accept ()
   {
     QMessageBox::warning(this, "Fehler", "Keine Einladungsfrist angegeben.", QMessageBox::Discard);
   }
-  else if (!ui->radioButtonHead->isChecked() && !ui->radioButtonMea->isChecked())
-  {
-    QMessageBox::warning(this, "Fehler", "Keine Abstimmungsvariante gewählt (nach Köpfen/nach MEA).", QMessageBox::Discard);
-  }
   else
   {
     done (QDialog::Accepted);
