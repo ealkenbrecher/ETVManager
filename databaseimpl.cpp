@@ -31,14 +31,10 @@ void DatabaseImpl::connect (void)
   dbHost = settings.value("database/host", "").toString();
   dbPort = settings.value("database/port", "").toInt();
 
-  qDebug () << "dbUser: " << dbUser;
-
   mDb = QSqlDatabase::addDatabase(dbType, dbUser);
   mDb.setDatabaseName(dbName);
   mDb.setHostName(dbHost);
   mDb.setPort(dbPort);
-
-  qDebug () << "dbName von DB: " << mDb.connectionName();
 
   if(!mDb.open())  // open it and keep it opened
   {
