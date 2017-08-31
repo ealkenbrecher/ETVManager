@@ -2,6 +2,7 @@
 #include "ui_propertysettings.h"
 #include <QtCore>
 #include "stringreplacer.h"
+#include <QMessageBox>
 
 PropertySettings::PropertySettings(QWidget *parent) :
     QDialog(parent),
@@ -25,7 +26,7 @@ void PropertySettings::setVotingRule (const QString rVotingRule)
 {
   ui->votingType->setText(rVotingRule);
 }
-void PropertySettings::setOwnerQuantity (long ownerQuantity)
+void PropertySettings::setOwnerQuantity (int ownerQuantity)
 {
   ui->ownerQuantity->setValue(ownerQuantity);
 }
@@ -61,7 +62,7 @@ QString PropertySettings::votingRule () const
   return ui->votingType->toHtml();
 }
 
-long PropertySettings::ownerQuantity () const
+int PropertySettings::ownerQuantity () const
 {
   return ui->ownerQuantity->value();
 }
@@ -69,4 +70,36 @@ long PropertySettings::ownerQuantity () const
 PropertySettings::~PropertySettings()
 {
   delete ui;
+}
+
+void PropertySettings::accept ()
+{
+  if ("" == propertyName ())
+  {
+    QMessageBox::warning(this, "Fehler", "Kein Liegenschaftsnahme angegeben.", QMessageBox::Discard);
+  }
+  else if (0 == ownerQuantity ())
+  {
+    QMessageBox::warning(this, "Fehler", "Keine Eigentümeranzahl angegeben.", QMessageBox::Discard);
+  }
+  else if ("" == votingRule ())
+  {
+    QMessageBox::warning(this, "Fehler", "Angaben zum Stimmrecht fehlen.", QMessageBox::Discard);
+  }
+  else if (0 == mea())
+  {
+    QMessageBox::warning(this, "Fehler", "Keine Miteigentumsanteile eingetragen.", QMessageBox::Discard);
+  }
+  else if ("" == getInvitationDeadline ())
+  {
+    QMessageBox::warning(this, "Fehler", "Keine Einladungsfrist angegeben.", QMessageBox::Discard);
+  }
+  else if (!ui->radioButtonHead->isChecked() && !ui->radioButtonMea->isChecked())
+  {
+    QMessageBox::warning(this, "Fehler", "Keine Abstimmungsvariante gewählt (nach Köpfen/nach MEA).", QMessageBox::Discard);
+  }
+  else
+  {
+    done (QDialog::Accepted);
+  }
 }

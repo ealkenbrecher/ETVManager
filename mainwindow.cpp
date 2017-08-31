@@ -7,6 +7,9 @@
 #include "patterneditorreport.h"
 #include "systemsettings.h"
 #include "propertyMainView.h"
+#include "propertysettings.h"
+#include "QMessageBox"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
   QWidget(parent),
@@ -121,5 +124,47 @@ void MainWindow::killPropertyView ()
     mPropertyWindow->hide();
     delete mPropertyWindow;
     mPropertyWindow = 0;
+  }
+}
+
+void MainWindow::on_newProperty_clicked()
+{
+  PropertySettings dialog (this);
+
+  if (QDialog::Accepted == dialog.exec())
+  {
+    //add property
+
+    //get highest id
+    int max_id = 0;
+    QString request ("SELECT obj_id FROM Objekt ORDER BY obj_id DESC");
+    QSqlQuery query (QSqlDatabase::database(mDbConnectionName));
+    query.prepare(request);
+    query.exec();
+
+    if (query.next())
+    {
+      max_id = query.value(0).toInt();
+      qDebug () << "max_id: " << max_id;
+
+      if (0 != max_id)
+      {
+        QString propertyName = dialog.propertyName();
+        QString invitationDeadline = dialog.getInvitationDeadline();
+        int ownerQuantity = dialog.ownerQuantity();
+        QString votingRule = dialog.votingRule();
+        float mea = dialog.mea();
+        int nextId = ++max_id;
+
+        query.prepare("INSERT INTO Objekt (obj_id, obj_name, obj_mea, obj_stimmrecht, obj_anz_et, obj_inv_deadline) VALUES (:obj_id, :obj_name, :obj_mea, :obj_stimmrecht, :obj_anz_et, :obj_inv_deadline)");
+        query.bindValue(":obj_id", nextId);
+        query.bindValue(":obj_name", propertyName);
+        query.bindValue(":obj_mea", mea);
+        query.bindValue(":obj_stimmrecht", votingRule);
+        query.bindValue(":obj_anz_et", ownerQuantity);
+        query.bindValue(":obj_inv_deadline", invitationDeadline);
+        query.exec();
+      }
+    }
   }
 }

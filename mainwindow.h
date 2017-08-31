@@ -30,6 +30,7 @@ private slots:
   void on_openProperty_clicked();
   void on_exitApplication_clicked();
   void killPropertyView ();
+  void on_newProperty_clicked();
 
 private:
   Ui::MainWindow *ui;

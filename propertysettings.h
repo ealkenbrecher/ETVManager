@@ -17,7 +17,7 @@ public:
     void setPropertyName (QString name);
     void setMea(float mea);
     void setVotingRule (const QString rVotingRule);
-    void setOwnerQuantity (long ownerQuantity);
+    void setOwnerQuantity (int ownerQuantity);
     void setpropertyId (long aId);
     void setInvitationDeadline (QString aValue);
     QString getInvitationDeadline ();
@@ -28,10 +28,11 @@ public:
     QString propertyName () const;
     float mea () const;
     QString votingRule () const;
-    long ownerQuantity () const;
+    int ownerQuantity () const;
     virtual ~PropertySettings();
 
 private:
+    void accept ();
     Ui::PropertySettings *ui;
 };
 
