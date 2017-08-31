@@ -38,9 +38,9 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     agendadialog.h \
     mainwindow.h \
     propertyMainView.h \
-    protocolgeneratormaindlg.h \
     qsqlquerymodelprotocolgeneratorview.h \
-    agendawizard.h
+    agendawizard.h \
+    protocolDecissionGenerator
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     propertysettings.cpp \
     agendatab.cpp \
@@ -75,9 +75,9 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     agendadialog.cpp \
     mainwindow.cpp \
     propertyMainView.cpp \
-    protocolgeneratormaindlg.cpp \
     qsqlquerymodelprotocolgeneratorview.cpp \
-    agendawizard.cpp
+    agendawizard.cpp \
+    protocolDecissionGenerator.cpp
 
 FORMS           = qsqlconnectiondialog.ui \
     propertysettings.ui \
@@ -105,7 +105,7 @@ FORMS           = qsqlconnectiondialog.ui \
     agendaoptionsdialog.ui \
     agendadialog.ui \
     mainwindow.ui \
-    protocolgeneratormaindlg.ui
+    protocolDecissionGenerator.ui
 
 build_all:!build_pass {
     CONFIG -= build_all

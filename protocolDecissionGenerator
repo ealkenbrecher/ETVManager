@@ -1,47 +1,39 @@
-#ifndef PROTOCOLGENERATORMAINDLG_H
-#define PROTOCOLGENERATORMAINDLG_H
+#ifndef PROTOCOLDECISSIONGENERATOR_H
+#define PROTOCOLDECISSIONGENERATOR_H
 
-#include <QDialog>
 #include <QWidget>
 
 class QSqlQueryModelProtocolGeneratorView;
 class AgendaWizard;
 
 namespace Ui {
-  class protocolGeneratorMainDlg;
+  class protocolDecissionGenerator;
 }
 
-class ProtocolGeneratorMainDlg : public QWidget
+class ProtocolDecissionGenerator : public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit ProtocolGeneratorMainDlg(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum);
-  ~ProtocolGeneratorMainDlg();
+  explicit ProtocolDecissionGenerator(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum);
+  ~ProtocolDecissionGenerator();
 
 signals:
   void exitView ();
 
 private slots:
   void on_startAgendaWizard_clicked();
-  void on_startCoverpageWizard_clicked();
-
   void on_moveEntryUp_clicked();
-
   void on_moveEntryDown_clicked();
-
   void on_addChangeRules_clicked();
-
   void on_addChangePresence_clicked();
-
   void on_buttonBox_accepted();
-
   void on_deleteAllEntries_clicked();
 
 private:
   void initTableView();
   void updateTableView ();
-  Ui::protocolGeneratorMainDlg *ui;
+  Ui::protocolDecissionGenerator *ui;
   QSqlQueryModelProtocolGeneratorView* mView;
   QString mDbConnectionName;
   int mEstateId;
@@ -51,4 +43,4 @@ private:
   AgendaWizard* mAgendaWizard;
 };
 
-#endif // PROTOCOLGENERATORMAINDLG_H
+#endif // PROTOCOLDECISSIONGENERATOR_H

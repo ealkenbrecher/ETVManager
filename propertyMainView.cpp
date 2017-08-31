@@ -18,7 +18,7 @@
 #include "agendaoptionsdialog.h"
 #include <QDebug>
 #include "global.h"
-#include "protocolgeneratormaindlg.h"
+#include "protocolDecissionGenerator"
 
 
 propertyMainView::propertyMainView(QWidget *parent, QString &rDbConnectionName, int curEstateId) :
@@ -32,7 +32,7 @@ propertyMainView::propertyMainView(QWidget *parent, QString &rDbConnectionName, 
   setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
   mItemModelTree = 0;
-  mProtocolGeneratorMainDlg = 0;
+  mProtocolDecissionGenerator = 0;
   mAgendaWidget = 0;
 
   openProperty();
@@ -57,8 +57,8 @@ propertyMainView::~propertyMainView()
 {
   delete ui;
 
-  if (0 != mProtocolGeneratorMainDlg)
-    delete mProtocolGeneratorMainDlg;
+  if (0 != mProtocolDecissionGenerator)
+    delete mProtocolDecissionGenerator;
 
   if (0 != mItemModelTree)
     delete mItemModelTree;
@@ -141,20 +141,20 @@ void propertyMainView::showProtocolGenerator ()
   int selectedYear = ui->treeView->selectionModel()->selectedRows(0).value(0).data().toInt();
   int selectedAgendaNum = ui->treeView->selectionModel()->selectedRows(1).value(0).data().toInt();
 
-  mProtocolGeneratorMainDlg = new ProtocolGeneratorMainDlg (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
-  if (0 != mProtocolGeneratorMainDlg)
+  mProtocolDecissionGenerator = new ProtocolDecissionGenerator (this, mDbConnectionName, mCurrentEstateId, selectedYear, selectedAgendaNum);
+  if (0 != mProtocolDecissionGenerator)
   {
-    connect (mProtocolGeneratorMainDlg, SIGNAL (exitView()), this, SLOT (killProtocolGeneratorView ()));
-    mProtocolGeneratorMainDlg->show ();
+    connect (mProtocolDecissionGenerator, SIGNAL (exitView()), this, SLOT (killProtocolGeneratorView ()));
+    mProtocolDecissionGenerator->show ();
   }
 }
 
 void propertyMainView::killProtocolGeneratorView ()
 {
-  if (0 != mProtocolGeneratorMainDlg)
+  if (0 != mProtocolDecissionGenerator)
   {
-    delete mProtocolGeneratorMainDlg;
-    mProtocolGeneratorMainDlg = 0;
+    delete mProtocolDecissionGenerator;
+    mProtocolDecissionGenerator = 0;
   }
 }
 

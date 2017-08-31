@@ -16,7 +16,7 @@ QT_FORWARD_DECLARE_CLASS(QSqlError)
 class PropertyOverview;
 class ConnectionWidget;
 class QStandardItemModelPropertyOverview;
-class ProtocolGeneratorMainDlg;
+class ProtocolDecissionGenerator;
 class AgendaDialog;
 
 enum tabSelection
@@ -66,7 +66,7 @@ private:
 
     int mCurrentEstateId;
     PropertyOverview* mPropertyOverview;
-    ProtocolGeneratorMainDlg* mProtocolGeneratorMainDlg;
+    ProtocolDecissionGenerator* mProtocolDecissionGenerator;
     QString mDbConnectionName;
     QStandardItemModelPropertyOverview* mItemModelTree;
     AgendaDialog* mAgendaWidget;

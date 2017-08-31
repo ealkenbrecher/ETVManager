@@ -1,13 +1,13 @@
-﻿#include "protocolgeneratormaindlg.h"
-#include "ui_protocolgeneratormaindlg.h"
+﻿#include "protocolDecissionGenerator"
+#include "ui_ProtocolDecissionGenerator.h"
 #include "QSqlQueryModelProtocolGeneratorView.h"
 #include "agendawizard.h"
 #include <QMessageBox>
 #include "global.h"
 
-ProtocolGeneratorMainDlg::ProtocolGeneratorMainDlg(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum) :
+ProtocolDecissionGenerator::ProtocolDecissionGenerator(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum) :
   QWidget(parent),
-  ui(new Ui::protocolGeneratorMainDlg)
+  ui(new Ui::protocolDecissionGenerator)
 {
   ui->setupUi(this);
   ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Zurück zur Übersicht");
@@ -26,7 +26,7 @@ ProtocolGeneratorMainDlg::ProtocolGeneratorMainDlg(QWidget *parent, QString &rDb
   updateTableView();
 }
 
-ProtocolGeneratorMainDlg::~ProtocolGeneratorMainDlg()
+ProtocolDecissionGenerator::~ProtocolDecissionGenerator()
 {
   if (0 != mView)
     delete mView;
@@ -37,7 +37,7 @@ ProtocolGeneratorMainDlg::~ProtocolGeneratorMainDlg()
   delete ui;
 }
 
-void ProtocolGeneratorMainDlg::initTableView ()
+void ProtocolDecissionGenerator::initTableView ()
 {
   if (0 == mView)
   {
@@ -47,7 +47,7 @@ void ProtocolGeneratorMainDlg::initTableView ()
   }
 }
 
-void ProtocolGeneratorMainDlg::updateTableView ()
+void ProtocolDecissionGenerator::updateTableView ()
 {
   if (0 != mView)
   {
@@ -59,7 +59,7 @@ void ProtocolGeneratorMainDlg::updateTableView ()
   }
 }
 
-void ProtocolGeneratorMainDlg::on_startAgendaWizard_clicked()
+void ProtocolDecissionGenerator::on_startAgendaWizard_clicked()
 {
   mAgendaWizard = new AgendaWizard (mDbConnectionName, mEstateId, mAgendaYear, mAgendaNum);
 
@@ -73,12 +73,7 @@ void ProtocolGeneratorMainDlg::on_startAgendaWizard_clicked()
   }
 }
 
-void ProtocolGeneratorMainDlg::on_startCoverpageWizard_clicked()
-{
-
-}
-
-void ProtocolGeneratorMainDlg::on_moveEntryUp_clicked()
+void ProtocolDecissionGenerator::on_moveEntryUp_clicked()
 {
   int selectedRow = ui->tableView->selectionModel()->selection().indexes().value(0).row();
   int protocolId = ui->tableView->model()->index(selectedRow,2).data().toInt();
@@ -100,7 +95,7 @@ void ProtocolGeneratorMainDlg::on_moveEntryUp_clicked()
   }
 }
 
-void ProtocolGeneratorMainDlg::on_moveEntryDown_clicked()
+void ProtocolDecissionGenerator::on_moveEntryDown_clicked()
 {
   int selectedRow = ui->tableView->selectionModel()->selection().indexes().value(0).row();
   int protocolId = ui->tableView->model()->index(selectedRow,2).data().toInt();
@@ -123,22 +118,22 @@ void ProtocolGeneratorMainDlg::on_moveEntryDown_clicked()
   }
 }
 
-void ProtocolGeneratorMainDlg::on_addChangeRules_clicked()
+void ProtocolDecissionGenerator::on_addChangeRules_clicked()
 {
 
 }
 
-void ProtocolGeneratorMainDlg::on_addChangePresence_clicked()
+void ProtocolDecissionGenerator::on_addChangePresence_clicked()
 {
 
 }
 
-void ProtocolGeneratorMainDlg::on_buttonBox_accepted()
+void ProtocolDecissionGenerator::on_buttonBox_accepted()
 {
   emit exitView();
 }
 
-void ProtocolGeneratorMainDlg::on_deleteAllEntries_clicked()
+void ProtocolDecissionGenerator::on_deleteAllEntries_clicked()
 {
   int ret = QMessageBox::warning(this, tr("ETVManager"),
                                  tr("Achtung. Bestätigung des Dialogs\n"
