@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Optionen</string>
+   <string>Gehe zu...</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -26,28 +26,28 @@
     <item>
      <widget class="QPushButton" name="editAgenda">
       <property name="text">
-       <string>Tagesordnung bearbeiten</string>
+       <string>Tagesordnung erstellen</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="generateProtocol">
       <property name="text">
-       <string>Protokollgenerator starten</string>
+       <string>Protokollabschrift generieren</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="editProtocolTranscript">
       <property name="text">
-       <string>Protokollabschrift nachbearbeiten</string>
+       <string>Protokollabschrift ansehen/abspeichern</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="generateDocuments">
       <property name="text">
-       <string>Dokumente generieren</string>
+       <string>Dokumente ausgeben</string>
       </property>
      </widget>
     </item>

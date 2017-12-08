@@ -3,6 +3,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include "wizarddialogbox.h"
+#include <QDebug>
 
 AgendaWizard::AgendaWizard (QString &rDbConnectionName, int estateId, int agendaYear, int agendaNum)
 {
@@ -68,6 +69,11 @@ bool AgendaWizard::getAgendaItems ()
 
     strings.insert(0, top_id);
     strings.insert(1, header);
+
+    QString debugStr ("");
+    debugStr = header.remove(QRegExp("<[^>]*>"));
+    qDebug () << "strings.insert(1, header): " << debugStr;
+
     strings.insert(2, descr);
     strings.insert(3, sug1);
     strings.insert(4, sug2);

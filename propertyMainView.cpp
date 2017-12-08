@@ -6,11 +6,11 @@
 #include <QtWidgets>
 #include <QtSql>
 #include "ordertab.h"
-#include "generatortab.h"
+#include "generatorWidget.h"
 #include "patterneditor.h"
 #include "patterneditorreport.h"
 #include "systemsettings.h"
-#include "reportgeneratortab.h"
+//#include "reportgeneratortab.h"
 #include "stringreplacer.h"
 #include "decissionlibrarytab.h"
 #include "propertylistdialog.h"
@@ -18,7 +18,7 @@
 #include "agendaoptionsdialog.h"
 #include <QDebug>
 #include "global.h"
-#include "protocolDecissionGenerator"
+#include "protocolDecissionGenerator.h"
 
 
 propertyMainView::propertyMainView(QWidget *parent, QString &rDbConnectionName, int curEstateId) :

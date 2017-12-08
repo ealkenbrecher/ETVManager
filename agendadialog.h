@@ -25,7 +25,6 @@ private slots:
   void on_addEntry_clicked();
   void on_deleteEntry_clicked();
   void on_tableAgenda_doubleClicked(const QModelIndex &index);
-
   void on_buttonBox_accepted();
 
 signals:

@@ -12,7 +12,7 @@ class DecissionItemSettings : public QDialog
   Q_OBJECT
 
 public:
-  explicit DecissionItemSettings(QWidget *parent = 0);
+  explicit DecissionItemSettings(QWidget *parent, QString &rDbConnectionName, int curEstateId, int curYear, int curAgendaNum, int decissionId);
   ~DecissionItemSettings();
   void setHeader (const QString aValue);
   void setDescription (const QString aValue);
@@ -22,6 +22,8 @@ public:
   void setNoVotes (float aValue);
   void setAbsentionVotes (float aValue);
   void setType (int aType);
+  void update ();
+  void saveValues ();
 
   const QString getHeader (void);
   const QString getDescription (void);
@@ -34,6 +36,12 @@ public:
 
 private:
   Ui::DecissionItemSettings *ui;
+
+  QString mDbConnectionName;
+  int mEstateId;
+  int mAgendaYear;
+  int mAgendaNum;
+  int mDecissionId;
 };
 
 #endif // DECISSIONITEMSETTINGS_H

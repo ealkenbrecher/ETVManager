@@ -8,7 +8,6 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     propertysettings.h \
     agendatab.h \
     propertytab.h \
-    generatortab.h \
     agendasettings.h \
     agendaitemsettings.h \
     QSqlQueryModelImpl.h \
@@ -21,7 +20,6 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     patterneditorreportitemsettings.h \
     systemsettings.h \
     editadvisersdialog.h \
-    reportgeneratortab.h \
     wizarddialogbox.h \
     votingdialog.h \
     stringreplacer.h \
@@ -40,12 +38,13 @@ HEADERS         = connectionwidget.h qsqlconnectiondialog.h \
     propertyMainView.h \
     qsqlquerymodelprotocolgeneratorview.h \
     agendawizard.h \
-    protocolDecissionGenerator
+    protocolDecissionGenerator.h \
+    presencechangedialog.h \
+    generatorWidget.h
 SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     propertysettings.cpp \
     agendatab.cpp \
     propertytab.cpp \
-    generatortab.cpp \
     agendasettings.cpp \
     agendaitemsettings.cpp \
     QSqlQueryModelImpl.cpp \
@@ -58,7 +57,6 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     patterneditorreportitemsettings.cpp \
     systemsettings.cpp \
     editadvisersdialog.cpp \
-    reportgeneratortab.cpp \
     wizarddialogbox.cpp \
     votingdialog.cpp \
     stringreplacer.cpp \
@@ -77,13 +75,14 @@ SOURCES         = main.cpp connectionwidget.cpp qsqlconnectiondialog.cpp \
     propertyMainView.cpp \
     qsqlquerymodelprotocolgeneratorview.cpp \
     agendawizard.cpp \
-    protocolDecissionGenerator.cpp
+    protocolDecissionGenerator.cpp \
+    presencechangedialog.cpp \
+    generatorWidget.cpp
 
 FORMS           = qsqlconnectiondialog.ui \
     propertysettings.ui \
     agendatab.ui \
     propertytab.ui \
-    generatortab.ui \
     agendasettings.ui \
     agendaitemsettings.ui \
     agendaitemcontextmenu.ui \
@@ -95,7 +94,6 @@ FORMS           = qsqlconnectiondialog.ui \
     patterneditorreportitemsettings.ui \
     systemsettings.ui \
     editadvisersdialog.ui \
-    reportgeneratortab.ui \
     votingdialog.ui \
     decissionitemsettings.ui \
     decissionlibrarytab.ui \
@@ -105,7 +103,9 @@ FORMS           = qsqlconnectiondialog.ui \
     agendaoptionsdialog.ui \
     agendadialog.ui \
     mainwindow.ui \
-    protocolDecissionGenerator.ui
+    protocolDecissionGenerator.ui \
+    presencechangedialog.ui \
+    generatorwidget.ui
 
 build_all:!build_pass {
     CONFIG -= build_all

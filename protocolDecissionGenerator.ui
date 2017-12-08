@@ -26,13 +26,6 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="2" column="0" colspan="2">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0" colspan="2">
      <widget class="QLabel" name="label_6">
       <property name="sizePolicy">
@@ -53,6 +46,13 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -130,10 +130,13 @@
       </attribute>
      </widget>
     </item>
-    <item row="7" column="0" colspan="2">
+    <item row="8" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="addChangeRules">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Geschäftsordnungsbeschluss hinzufügen</string>
         </property>
@@ -141,28 +144,17 @@
       </item>
       <item>
        <widget class="QPushButton" name="addChangePresence">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Änderung Anwesenheit zur Versammlung</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="deleteAllEntries">
-        <property name="text">
-         <string>Alle generierten Beschlüsse löschen</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QPushButton" name="startAgendaWizard">
-      <property name="text">
-       <string>Beschlussgenerator starten</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0" colspan="2">
+    <item row="7" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QPushButton" name="moveEntryUp">
@@ -179,37 +171,25 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="editEntry">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QPushButton" name="deleteAllEntries">
         <property name="text">
-         <string>Beschluss bearbeiten</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="deleteEntry">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Beschluss löschen</string>
+         <string>Alle generierten Beschlüsse zurücksetzen</string>
         </property>
        </widget>
       </item>
      </layout>
     </item>
-    <item row="8" column="0">
+    <item row="9" column="0">
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="standardButtons">
        <set>QDialogButtonBox::Ok</set>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QPushButton" name="startAgendaWizard">
+      <property name="text">
+       <string>Beschlussgenerator starten</string>
       </property>
      </widget>
     </item>

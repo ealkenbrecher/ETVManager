@@ -1,9 +1,11 @@
-﻿#include "protocolDecissionGenerator"
+﻿#include "protocolDecissionGenerator.h"
 #include "ui_ProtocolDecissionGenerator.h"
 #include "QSqlQueryModelProtocolGeneratorView.h"
 #include "agendawizard.h"
 #include <QMessageBox>
 #include "global.h"
+#include "presencechangedialog.h"
+#include "decissionitemsettings.h"
 
 ProtocolDecissionGenerator::ProtocolDecissionGenerator(QWidget *parent, QString &rDbConnectionName, int curEstateId, int agendaYear, int agendaNum) :
   QWidget(parent),
@@ -125,7 +127,12 @@ void ProtocolDecissionGenerator::on_addChangeRules_clicked()
 
 void ProtocolDecissionGenerator::on_addChangePresence_clicked()
 {
+  presenceChangeDialog presenceDlg (this, mDbConnectionName, mEstateId, mAgendaYear, mAgendaNum);
+  presenceDlg.update();
+  presenceDlg.show();
 
+  if (presenceDlg.exec() != QDialog::Rejected)
+    updateTableView();
 }
 
 void ProtocolDecissionGenerator::on_buttonBox_accepted()
@@ -153,5 +160,28 @@ void ProtocolDecissionGenerator::on_deleteAllEntries_clicked()
     default:
       // should never be reached
       break;
+  }
+}
+
+void ProtocolDecissionGenerator::on_tableView_doubleClicked (const QModelIndex &index)
+{
+  if (ui->tableView->selectionModel()->selectedRows().count() == 1)
+  {
+    int id = ui->tableView->model()->index(index.row(),0).data().toInt();
+    changeDecissionItem(id);
+  }
+}
+
+void ProtocolDecissionGenerator::changeDecissionItem(int id)
+{
+  DecissionItemSettings decItemSettings (this, mDbConnectionName, mEstateId, mAgendaYear, mAgendaNum, id);
+
+  decItemSettings.update();
+  decItemSettings.show();
+
+  if (decItemSettings.exec() != QDialog::Rejected)
+  {
+    decItemSettings.saveValues ();
+    updateTableView();
   }
 }
