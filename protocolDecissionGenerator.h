@@ -2,6 +2,7 @@
 #define PROTOCOLDECISSIONGENERATOR_H
 
 #include <QWidget>
+#include <QModelIndex>
 
 class QSqlQueryModelProtocolGeneratorView;
 class AgendaWizard;
@@ -29,10 +30,12 @@ private slots:
   void on_addChangePresence_clicked();
   void on_buttonBox_accepted();
   void on_deleteAllEntries_clicked();
+  void on_tableView_doubleClicked (const QModelIndex &index);
 
 private:
   void initTableView();
   void updateTableView ();
+  void changeDecissionItem (int aId);
   Ui::protocolDecissionGenerator *ui;
   QSqlQueryModelProtocolGeneratorView* mView;
   QString mDbConnectionName;
